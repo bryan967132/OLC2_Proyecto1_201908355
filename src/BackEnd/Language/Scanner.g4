@@ -80,6 +80,7 @@ TK_comma     : ','           ;
 TK_colon     : ':'           ;
 TK_semicolon : ';'           ;
 TK_question  : '?'           ;
+TK_amp       : '&'           ;
 //
 NEWLINE      : '\n'     -> skip ;
 UNUSED_      : UNUSED   -> skip ;

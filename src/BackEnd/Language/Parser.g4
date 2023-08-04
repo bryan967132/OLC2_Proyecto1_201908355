@@ -10,7 +10,7 @@ tokens {
     TK_equequ, TK_notequ, TK_lessequ, TK_moreequ, TK_equ, TK_less, TK_more,
     TK_and, TK_or, TK_not,
     TK_lpar, TK_rpar, TK_lbrc, TK_rbrc, TK_lbrk, TK_rbrk,
-    TK_dot, TK_comma, TK_colon, TK_semicolon, TK_question
+    TK_dot, TK_comma, TK_colon, TK_semicolon, TK_question, TK_amp
 }
 
 init :
@@ -23,6 +23,13 @@ instsglobal :
 instglobal :
     instruction |
     declfunc    ;
+
+callfunc :
+    TK_id TK_lpar listargs? TK_rpar ;
+
+listargs :
+    TK_comma (TK_id TK_colon)? TK_amp? exp listargs |
+    (TK_id TK_colon)? TK_amp? exp                   ;
 
 decvar :
     RW_var TK_id TK_colon type TK_equ exp  |
@@ -37,8 +44,8 @@ declfunc :
     RW_func TK_id TK_lpar listparams? TK_rpar (TK_prompt type)? env ;
 
 listparams :
-    TK_comma (TK_id | TK_under) ? TK_id TK_colon RW_inout? type listparams |
-    (TK_id | TK_under) ? TK_id TK_colon RW_inout? type                     ;
+    TK_comma (TK_id | TK_under)? TK_id TK_colon RW_inout? type listparams |
+    (TK_id | TK_under)? TK_id TK_colon RW_inout? type                     ;
 
 ifstruct :
     RW_if exp env RW_else ifstruct |
@@ -61,10 +68,10 @@ cases :
     case       ;
 
 case :
-    RW_case exp TK_colon instructions? ;
+    RW_case exp TK_colon instructions ;
 
 default :
-    RW_default TK_colon instructions? ;
+    RW_default TK_colon instructions ;
 
 loopfor :
     RW_for TK_id RW_in (exp | range) env ;
@@ -100,6 +107,7 @@ instruction :
     loopwhile     |
     reasign       |
     addsub        |
+    callfunc      |
     print         |
     RW_return exp |
     RW_return     |
@@ -127,6 +135,8 @@ exp :
     s = TK_not e2 = exp          |
     e1 = exp s = TK_and e2 = exp |
     e1 = exp s = TK_or  e2 = exp |
+    // CALL FUNCTION
+    callfunc                |
     // NIL
     n = RW_nil              |
     // PRIMITIVES
@@ -137,4 +147,5 @@ exp :
     p = TK_float            |
     p = RW_true             |
     p = RW_false            |
+    // GROUP
     TK_lpar e = exp TK_rpar ;

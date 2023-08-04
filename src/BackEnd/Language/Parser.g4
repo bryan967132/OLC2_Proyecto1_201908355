@@ -93,24 +93,18 @@ type :
 
 exp :
     // ARITHMETICS
-    <assoc = right> s = TK_minus e2 = exp            |
-    <assoc = left>  e1 = exp s = TK_mult    e2 = exp |
-    <assoc = left>  e1 = exp s = TK_div     e2 = exp |
-    <assoc = left>  e1 = exp s = TK_plus    e2 = exp |
-    <assoc = left>  e1 = exp s = TK_minus   e2 = exp |
-    <assoc = left>  e1 = exp s = TK_pow     e2 = exp |
-    <assoc = left>  e1 = exp s = TK_mod     e2 = exp |
+    s = TK_minus e2 = exp                             |
+    e1 = exp s = TK_pow                      e2 = exp |
+    e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp |
+    e1 = exp s = (TK_plus | TK_minus)        e2 = exp |
     // RELATIONALS
-    <assoc = left>  e1 = exp s = TK_equequ  e2 = exp |
-    <assoc = left>  e1 = exp s = TK_notequ  e2 = exp |
-    <assoc = left>  e1 = exp s = TK_lessequ e2 = exp |
-    <assoc = left>  e1 = exp s = TK_moreequ e2 = exp |
-    <assoc = left>  e1 = exp s = TK_less    e2 = exp |
-    <assoc = left>  e1 = exp s = TK_more    e2 = exp |
+    e1 = exp s = (TK_lessequ | TK_moreequ)   e2 = exp |
+    e1 = exp s = (TK_less    | TK_more)      e2 = exp |
+    e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp |
     // LOGICS
-    <assoc = right> s = TK_not e2 = exp              |
-    <assoc = left>  e1 = exp s = TK_and     e2 = exp |
-    <assoc = left>  e1 = exp s = TK_or      e2 = exp |
+    s = TK_not e2 = exp                               |
+    e1 = exp s = TK_and     e2 = exp                  |
+    e1 = exp s = TK_or      e2 = exp                  |
     // NIL
     n = RW_nil              |
     // PRIMITIVES

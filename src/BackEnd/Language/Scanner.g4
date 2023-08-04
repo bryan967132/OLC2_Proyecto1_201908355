@@ -33,6 +33,7 @@ RW_false     : 'false'       ;
 RW_nil       : 'nil'         ;
 RW_func      : 'func'        ;
 RW_inout     : 'inout'       ;
+RW_in        : 'in'          ;
 RW_print     : 'print'       ;
 // Operators
 TK_prompt    : '->'          ;
@@ -74,6 +75,7 @@ TK_rbrc      : '}'           ;
 TK_lbrk      : '['           ;
 TK_rbrk      : ']'           ;
 // Signos
+TK_dot       : '.'           ;
 TK_comma     : ','           ;
 TK_colon     : ':'           ;
 TK_semicolon : ';'           ;

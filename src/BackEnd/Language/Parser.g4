@@ -4,12 +4,13 @@ tokens {
     RW_Int, RW_Float, RW_String, RW_Bool, RW_Character, RW_var, RW_let,
     RW_if, RW_else, RW_for, RW_while, RW_switch, RW_case, RW_default,
     RW_break, RW_continue, RW_return,
-    RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_print, TK_prompt, TK_under,
+    RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in, RW_print, TK_prompt, TK_under,
     TK_string, TK_char, TK_int, TK_float, TK_id, TK_add, TK_sub,
     TK_plus, TK_minus, TK_mult, TK_div, TK_pow, TK_mod,
     TK_equequ, TK_notequ, TK_lessequ, TK_moreequ, TK_equ, TK_less, TK_more,
     TK_and, TK_or, TK_not,
-    TK_lpar, TK_rpar, TK_lbrc, TK_rbrc, TK_lbrk, TK_rbrk, TK_comma, TK_colon, TK_semicolon, TK_question
+    TK_lpar, TK_rpar, TK_lbrc, TK_rbrc, TK_lbrk, TK_rbrk,
+    TK_dot, TK_comma, TK_colon, TK_semicolon, TK_question
 }
 
 init :
@@ -37,7 +38,7 @@ declfunc :
 
 listparams :
     TK_comma (TK_id | TK_under) ? TK_id TK_colon RW_inout? type listparams |
-    (TK_id | TK_under) ? TK_id TK_colon RW_inout? type                 ;
+    (TK_id | TK_under) ? TK_id TK_colon RW_inout? type                     ;
 
 ifstruct :
     RW_if exp env RW_else ifstruct |
@@ -51,7 +52,9 @@ envs :
     TK_lbrc casesdefault TK_rbrc ;
 
 casesdefault :
-    cases? default? ;
+    cases default |
+    cases         |
+    default       ;
 
 cases :
     case cases |
@@ -62,6 +65,15 @@ case :
 
 default :
     RW_default TK_colon instructions? ;
+
+loopfor :
+    RW_for TK_id RW_in (exp | range) env ;
+
+range :
+    TK_int TK_dot TK_dot TK_dot TK_int ;
+
+loopwhile :
+    RW_while exp env ;
 
 print :
     RW_print TK_lpar exp? TK_rpar ;
@@ -78,6 +90,8 @@ instruction :
     deccst        |
     ifstruct      |
     switchstruct  |
+    loopfor       |
+    loopwhile     |
     print         |
     RW_return exp |
     RW_return     |
@@ -102,9 +116,9 @@ exp :
     e1 = exp s = (TK_less    | TK_more)      e2 = exp |
     e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp |
     // LOGICS
-    s = TK_not e2 = exp                               |
-    e1 = exp s = TK_and     e2 = exp                  |
-    e1 = exp s = TK_or      e2 = exp                  |
+    s = TK_not e2 = exp          |
+    e1 = exp s = TK_and e2 = exp |
+    e1 = exp s = TK_or  e2 = exp |
     // NIL
     n = RW_nil              |
     // PRIMITIVES

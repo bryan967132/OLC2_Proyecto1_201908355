@@ -1,7 +1,7 @@
 lexer grammar Scanner;
 
 fragment UNUSED   : [ \r\t]+                            ;
-fragment CONTENT  : (~[\n"\\]|'\\'.)                    ;
+fragment CONTENT  : (~('\n'|'"'|'\\')|'\\'.)            ;
 fragment ID       : ('_')*[a-zA-Z][a-zA-Z0-9_]*         ;
 fragment STRING   : '"'(CONTENT)*'"'                    ;
 fragment CHAR     : '\''(CONTENT)'\''                   ;
@@ -31,7 +31,11 @@ RW_return    : 'return'      ;
 RW_true      : 'true'        ;
 RW_false     : 'false'       ;
 RW_nil       : 'nil'         ;
+RW_func      : 'func'        ;
 RW_print     : 'print'       ;
+// Operators
+TK_prompt    : '->'          ;
+TK_under     : '_'           ;
 // Valores
 TK_string    : STRING        ;
 TK_char      : CHAR          ;

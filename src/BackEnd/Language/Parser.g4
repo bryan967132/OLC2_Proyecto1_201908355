@@ -75,6 +75,12 @@ range :
 loopwhile :
     RW_while exp env ;
 
+reasign :
+    TK_id TK_equ exp ;
+
+addsub :
+    TK_id (TK_add | TK_sub) exp ;
+
 print :
     RW_print TK_lpar exp? TK_rpar ;
 
@@ -92,6 +98,8 @@ instruction :
     switchstruct  |
     loopfor       |
     loopwhile     |
+    reasign       |
+    addsub        |
     print         |
     RW_return exp |
     RW_return     |

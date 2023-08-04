@@ -32,6 +32,7 @@ RW_true      : 'true'        ;
 RW_false     : 'false'       ;
 RW_nil       : 'nil'         ;
 RW_func      : 'func'        ;
+RW_inout     : 'inout'       ;
 RW_print     : 'print'       ;
 // Operators
 TK_prompt    : '->'          ;

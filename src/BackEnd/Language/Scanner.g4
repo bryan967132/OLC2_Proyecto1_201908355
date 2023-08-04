@@ -8,7 +8,7 @@ fragment CHAR     : '\''(CONTENT)'\''                   ;
 fragment INTEGER  : [0-9]+                              ;
 fragment FLOAT    : [0-9]+'.'[0-9]+                     ;
 fragment COMMENTS : '//'(~[\r\n])*                      ;
-fragment COMMENTM : [/][*]~[*]*[*]+(~[/*]~[*]*[*]+)*[/] ;
+fragment COMMENTM : [/][*]~[*]*[*]+(~[*/]~[*]*[*]+)*[/] ;
 
 // Reservadas
 RW_Int       : 'Int'         ;

@@ -13,33 +13,30 @@ tokens {
 }
 
 init :
-    instructions EOF |
-    EOF              ;
+    instsglobal? EOF ;
 
-instructions :
-    instruction instructions |
-    instruction              ;
+instsglobal :
+    instglobal instsglobal |
+    instglobal             ;
 
-instruction :
-    decvar   |
-    deccst   |
-    declfunc |
-    ifstruct ;
+instglobal :
+    instruction |
+    declfunc    ;
 
 decvar :
     RW_var TK_id TK_colon type TK_equ exp  |
-    RW_var TK_id TK_equ exp                |
-    RW_var TK_id TK_colon type TK_question ;
+    RW_var TK_id TK_colon type TK_question |
+    RW_var TK_id TK_equ exp                ;
 
 deccst :
     RW_let TK_id TK_colon type TK_equ exp  |
-    RW_let TK_id TK_colon type TK_question ;
+    RW_let TK_id TK_equ exp                ;
 
 declfunc :
-    RW_func TK_id TK_lpar params? TK_rpar (TK_prompt type)? env ;
+    RW_func TK_id TK_lpar listparams? TK_rpar (TK_prompt type)? env ;
 
-params :
-    TK_comma (TK_id | TK_under) ? TK_id TK_colon RW_inout? type params |
+listparams :
+    TK_comma (TK_id | TK_under) ? TK_id TK_colon RW_inout? type listparams |
     (TK_id | TK_under) ? TK_id TK_colon RW_inout? type                 ;
 
 ifstruct :
@@ -47,8 +44,45 @@ ifstruct :
     RW_if exp env RW_else env      |
     RW_if exp env                  ;
 
+switchstruct :
+    RW_switch exp envs ;
+
+envs :
+    TK_lbrc casesdefault TK_rbrc ;
+
+casesdefault :
+    cases? default? ;
+
+cases :
+    case cases |
+    case       ;
+
+case :
+    RW_case exp TK_colon instructions? ;
+
+default :
+    RW_default TK_colon instructions? ;
+
+print :
+    RW_print TK_lpar exp? TK_rpar ;
+
 env :
     TK_lbrc instructions? TK_rbrc ;
+
+instructions :
+    instruction instructions |
+    instruction              ;
+
+instruction :
+    decvar        |
+    deccst        |
+    ifstruct      |
+    switchstruct  |
+    print         |
+    RW_return exp |
+    RW_return     |
+    RW_continue   |
+    RW_break      ;
 
 type :
     RW_String    |

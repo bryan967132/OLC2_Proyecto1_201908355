@@ -22,6 +22,7 @@ RW_if        : 'if'          ;
 RW_else      : 'else'        ;
 RW_for       : 'for'         ;
 RW_while     : 'while'       ;
+RW_guard     : 'guard'       ;
 RW_switch    : 'switch'      ;
 RW_case      : 'case'        ;
 RW_default   : 'default'     ;

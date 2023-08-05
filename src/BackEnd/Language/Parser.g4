@@ -2,7 +2,7 @@ grammar Parser;
 
 tokens {
     RW_Int, RW_Float, RW_String, RW_Bool, RW_Character, RW_var, RW_let,
-    RW_if, RW_else, RW_for, RW_while, RW_switch, RW_case, RW_default,
+    RW_if, RW_else, RW_for, RW_while, RW_guard, RW_switch, RW_case, RW_default,
     RW_break, RW_continue, RW_return,
     RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in, RW_print, TK_prompt, TK_under,
     TK_string, TK_char, TK_int, TK_float, TK_id, TK_add, TK_sub,
@@ -82,6 +82,9 @@ range :
 loopwhile :
     RW_while exp env ;
 
+guard :
+    RW_guard exp RW_else env ;
+
 reasign :
     TK_id TK_equ exp ;
 
@@ -105,6 +108,7 @@ instruction :
     switchstruct  |
     loopfor       |
     loopwhile     |
+    guard         |
     reasign       |
     addsub        |
     callfunc      |
@@ -124,7 +128,6 @@ type :
 exp :
     // ARITHMETICS
     s = TK_minus e2 = exp                             |
-    e1 = exp s = TK_pow                      e2 = exp |
     e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp |
     e1 = exp s = (TK_plus | TK_minus)        e2 = exp |
     // RELATIONALS
@@ -135,6 +138,10 @@ exp :
     s = TK_not e2 = exp          |
     e1 = exp s = TK_and e2 = exp |
     e1 = exp s = TK_or  e2 = exp |
+    // CAST
+    RW_Int    TK_lpar exp TK_rpar |
+    RW_Float  TK_lpar exp TK_rpar |
+    RW_String TK_lpar exp TK_rpar |
     // CALL FUNCTION
     callfunc                |
     // NIL

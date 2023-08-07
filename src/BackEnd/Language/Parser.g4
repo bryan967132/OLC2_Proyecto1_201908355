@@ -4,7 +4,9 @@ tokens {
     RW_Int, RW_Float, RW_String, RW_Bool, RW_Character, RW_var, RW_let,
     RW_if, RW_else, RW_for, RW_while, RW_guard, RW_switch, RW_case, RW_default,
     RW_break, RW_continue, RW_return,
-    RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in, RW_print, TK_prompt, TK_under,
+    RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in,
+    RW_append, RW_removeLast, RW_remove, RW_isEmpty, RW_count, RW_repeating,
+    RW_print, TK_prompt, TK_under,
     TK_char, TK_string, TK_int, TK_float, TK_id, TK_add, TK_sub,
     TK_plus, TK_minus, TK_mult, TK_div, TK_mod,
     TK_equequ, TK_notequ, TK_lessequ, TK_moreequ, TK_equ, TK_less, TK_more,
@@ -28,7 +30,7 @@ callfunc :
     TK_id TK_lpar listargs? TK_rpar ;
 
 listargs :
-    TK_comma (TK_id TK_colon)? TK_amp? exp listargs |
+    (TK_id TK_colon)? TK_amp? exp TK_comma listargs |
     (TK_id TK_colon)? TK_amp? exp                   ;
 
 decvar :
@@ -44,7 +46,7 @@ declfunc :
     RW_func TK_id TK_lpar listparams? TK_rpar (TK_prompt type)? env ;
 
 listparams :
-    TK_comma (TK_id | TK_under)? TK_id TK_colon RW_inout? type listparams |
+    (TK_id | TK_under)? TK_id TK_colon RW_inout? type TK_comma listparams |
     (TK_id | TK_under)? TK_id TK_colon RW_inout? type                     ;
 
 ifstruct :
@@ -91,6 +93,26 @@ reasign :
 addsub :
     TK_id (TK_add | TK_sub) exp ;
 
+decvector :
+    RW_var TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector ;
+
+defvector :
+    TK_lbrk listexp? TK_rbrk |
+    simplevec                |
+    TK_id                    ;
+
+listexp :
+    exp TK_comma listexp |
+    exp                  ;
+
+simplevec :
+    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
+
+funcvector :
+    TK_id TK_dot RW_append TK_lpar exp TK_rpar |
+    TK_id TK_dot RW_removeLast TK_lpar TK_rpar |
+    TK_id TK_dot RW_remove TK_lpar exp TK_rpar ;
+
 print :
     RW_print TK_lpar exp? TK_rpar ;
 
@@ -111,6 +133,8 @@ instruction :
     guard         |
     reasign       |
     addsub        |
+    decvector     |
+    funcvector    |
     callfunc      |
     print         |
     RW_return exp |
@@ -142,6 +166,10 @@ exp :
     RW_Int    TK_lpar exp TK_rpar |
     RW_Float  TK_lpar exp TK_rpar |
     RW_String TK_lpar exp TK_rpar |
+    // Vector
+    TK_id TK_lbrk exp TK_rbrk     |
+    TK_id TK_dot RW_isEmpty       |
+    TK_id TK_dot RW_count         |
     // CALL FUNCTION
     callfunc                |
     // NIL

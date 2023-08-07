@@ -127,24 +127,24 @@ instructions :
     instruction              ;
 
 instruction :
-    decvar        |
-    deccst        |
-    ifstruct      |
-    switchstruct  |
-    loopfor       |
-    loopwhile     |
-    guard         |
-    reasign       |
-    addsub        |
-    decvector     |
-    funcvector    |
-    reasignvector |
-    callfunc      |
-    print         |
-    RW_return exp |
-    RW_return     |
-    RW_continue   |
-    RW_break      ;
+    decvar        TK_semicolon? |
+    deccst        TK_semicolon? |
+    ifstruct                    |
+    switchstruct                |
+    loopfor                     |
+    loopwhile                   |
+    guard                       |
+    reasign       TK_semicolon? |
+    addsub        TK_semicolon? |
+    decvector     TK_semicolon? |
+    funcvector    TK_semicolon? |
+    reasignvector TK_semicolon? |
+    callfunc      TK_semicolon? |
+    print         TK_semicolon? |
+    RW_return exp TK_semicolon? |
+    RW_return     TK_semicolon? |
+    RW_continue   TK_semicolon? |
+    RW_break      TK_semicolon? ;
 
 type :
     RW_String    |

@@ -5,7 +5,7 @@ tokens {
     RW_if, RW_else, RW_for, RW_while, RW_guard, RW_switch, RW_case, RW_default,
     RW_break, RW_continue, RW_return,
     RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in,
-    RW_append, RW_removeLast, RW_remove, RW_isEmpty, RW_count, RW_repeating,
+    RW_append, RW_removeLast, RW_remove, RW_at, RW_isEmpty, RW_count, RW_repeating,
     RW_print, TK_prompt, TK_under,
     TK_char, TK_string, TK_int, TK_float, TK_id, TK_add, TK_sub,
     TK_plus, TK_minus, TK_mult, TK_div, TK_mod,
@@ -79,7 +79,7 @@ loopfor :
     RW_for TK_id RW_in (exp | range) env ;
 
 range :
-    TK_int TK_dot TK_dot TK_dot TK_int ;
+    exp TK_dot TK_dot TK_dot exp ;
 
 loopwhile :
     RW_while exp env ;
@@ -109,9 +109,12 @@ simplevec :
     TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
 
 funcvector :
-    TK_id TK_dot RW_append TK_lpar exp TK_rpar |
-    TK_id TK_dot RW_removeLast TK_lpar TK_rpar |
-    TK_id TK_dot RW_remove TK_lpar exp TK_rpar ;
+    TK_id TK_dot RW_append TK_lpar exp TK_rpar                |
+    TK_id TK_dot RW_removeLast TK_lpar TK_rpar                |
+    TK_id TK_dot RW_remove TK_lpar RW_at TK_colon exp TK_rpar ;
+
+reasignvector :
+    TK_id TK_lbrk exp TK_rbrk TK_equ exp ;
 
 print :
     RW_print TK_lpar exp? TK_rpar ;
@@ -135,6 +138,7 @@ instruction :
     addsub        |
     decvector     |
     funcvector    |
+    reasignvector |
     callfunc      |
     print         |
     RW_return exp |

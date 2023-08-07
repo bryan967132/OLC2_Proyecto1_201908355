@@ -3,8 +3,8 @@ lexer grammar Scanner;
 fragment UNUSED   : [ \r\t]+                            ;
 fragment CONTENT  : (~('\n'|'"'|'\\')|'\\'.)            ;
 fragment ID       : ('_')*[a-zA-Z][a-zA-Z0-9_]*         ;
+fragment CHAR     : '"'(CONTENT)'"'                     ;
 fragment STRING   : '"'(CONTENT)*'"'                    ;
-fragment CHAR     : '\''(CONTENT)'\''                   ;
 fragment INTEGER  : [0-9]+                              ;
 fragment FLOAT    : [0-9]+'.'[0-9]+                     ;
 fragment COMMENTS : '//'(~[\r\n])*                      ;
@@ -40,8 +40,8 @@ RW_print     : 'print'       ;
 TK_prompt    : '->'          ;
 TK_under     : '_'           ;
 // Valores
-TK_string    : STRING        ;
 TK_char      : CHAR          ;
+TK_string    : STRING        ;
 TK_int       : INTEGER       ;
 TK_float     : FLOAT         ;
 // Variables
@@ -54,7 +54,6 @@ TK_plus      : '+'           ;
 TK_minus     : '-'           ;
 TK_mult      : '*'           ;
 TK_div       : '/'           ;
-TK_pow       : '^'           ;
 TK_mod       : '%'           ;
 // Operadores Relacionales
 TK_equequ    : '=='          ;

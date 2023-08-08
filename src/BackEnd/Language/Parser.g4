@@ -106,7 +106,7 @@ listexp :
     exp                  ;
 
 simplevec :
-    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
+    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon TK_int TK_rpar ;
 
 funcvector :
     TK_id TK_dot RW_append TK_lpar exp TK_rpar                |
@@ -115,6 +115,29 @@ funcvector :
 
 reasignvector :
     TK_id TK_lbrk exp TK_rbrk TK_equ exp ;
+
+decMatrix :
+    RW_var TK_id (TK_colon typematrix)? TK_equ defmatrix ;
+
+typematrix :
+    TK_lbrk typematrix TK_rbrk |
+    TK_lbrk type TK_rbrk       ;
+
+defmatrix :
+    listvector   |
+    simplematrix ;
+
+listvector :
+    TK_lbrk listvector2 TK_rbrk ;
+
+listvector2 :
+    listvector2 TK_comma listvector |
+    listvector                      |
+    listexp                         ;
+
+simplematrix :
+    typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon TK_int TK_rpar |
+    typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon TK_int TK_rpar ;
 
 print :
     RW_print TK_lpar exp? TK_rpar ;
@@ -139,6 +162,7 @@ instruction :
     decvector     TK_semicolon? |
     funcvector    TK_semicolon? |
     reasignvector TK_semicolon? |
+    decMatrix     TK_semicolon? |
     callfunc      TK_semicolon? |
     print         TK_semicolon? |
     RW_return exp TK_semicolon? |

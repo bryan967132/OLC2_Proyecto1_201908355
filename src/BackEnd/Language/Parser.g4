@@ -6,7 +6,7 @@ tokens {
     RW_break, RW_continue, RW_return,
     RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in,
     RW_append, RW_removeLast, RW_remove, RW_at, RW_isEmpty, RW_count, RW_repeating,
-    RW_print, TK_prompt, TK_under,
+    RW_struct, RW_mutating, RW_self, RW_print, TK_prompt, TK_under,
     TK_char, TK_string, TK_int, TK_float, TK_id, TK_add, TK_sub,
     TK_plus, TK_minus, TK_mult, TK_div, TK_mod,
     TK_equequ, TK_notequ, TK_lessequ, TK_moreequ, TK_equ, TK_less, TK_more,
@@ -106,7 +106,7 @@ listexp :
     exp                  ;
 
 simplevec :
-    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon TK_int TK_rpar ;
+    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
 
 funcvector :
     TK_id TK_dot RW_append TK_lpar exp TK_rpar                |
@@ -116,7 +116,7 @@ funcvector :
 reasignvector :
     TK_id TK_lbrk exp TK_rbrk TK_equ exp ;
 
-decMatrix :
+decmatrix :
     RW_var TK_id (TK_colon typematrix)? TK_equ defmatrix ;
 
 typematrix :
@@ -136,8 +136,39 @@ listvector2 :
     listexp                         ;
 
 simplematrix :
-    typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon TK_int TK_rpar |
-    typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon TK_int TK_rpar ;
+    typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon exp TK_rpar |
+    typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar          ;
+
+defstruct :
+    RW_struct TK_id TK_lbrc listattribs TK_rbrc ;
+
+listattribs :
+    attrib TK_semicolon? listattribs |
+    attrib TK_semicolon?             ;
+
+attrib :
+    (RW_let | RW_var) TK_id (TK_colon type)? (TK_equ exp)? |
+    RW_mutating? declfunc ;
+
+decstruct :
+    (RW_let | RW_var) TK_id (TK_colon TK_id)? TK_equ TK_id TK_lpar listdupla? TK_rpar |
+    (RW_let | RW_var) TK_id (TK_colon TK_id)? TK_equ TK_id TK_lpar TK_rpar       ;
+
+listdupla :
+    TK_id TK_colon exp TK_comma listdupla |
+    TK_id TK_colon exp                    ;
+
+useattribs :
+    obj useattribs1     |
+    obj TK_dot callfunc ;
+
+obj :
+    TK_id TK_lbrk exp TK_rbrk |
+    TK_id                     ;
+
+useattribs1 :
+    TK_dot TK_id useattribs1 |
+    TK_dot TK_id             ;
 
 print :
     RW_print TK_lpar exp? TK_rpar ;
@@ -150,32 +181,36 @@ instructions :
     instruction              ;
 
 instruction :
-    decvar        TK_semicolon? |
-    deccst        TK_semicolon? |
-    ifstruct                    |
-    switchstruct                |
-    loopfor                     |
-    loopwhile                   |
-    guard                       |
-    reasign       TK_semicolon? |
-    addsub        TK_semicolon? |
-    decvector     TK_semicolon? |
-    funcvector    TK_semicolon? |
-    reasignvector TK_semicolon? |
-    decMatrix     TK_semicolon? |
-    callfunc      TK_semicolon? |
-    print         TK_semicolon? |
-    RW_return exp TK_semicolon? |
-    RW_return     TK_semicolon? |
-    RW_continue   TK_semicolon? |
-    RW_break      TK_semicolon? ;
+    decvar                          TK_semicolon? |
+    deccst                          TK_semicolon? |
+    ifstruct                                      |
+    switchstruct                                  |
+    loopfor                                       |
+    loopwhile                                     |
+    guard                                         |
+    (RW_self TK_dot)? reasign       TK_semicolon? |
+    (RW_self TK_dot)? addsub        TK_semicolon? |
+    decvector                       TK_semicolon? |
+    funcvector                      TK_semicolon? |
+    (RW_self TK_dot)? reasignvector TK_semicolon? |
+    decmatrix                       TK_semicolon? |
+    defstruct                       TK_semicolon? |
+    decstruct                       TK_semicolon? |
+    (RW_self TK_dot)? useattribs    TK_semicolon? |
+    (RW_self TK_dot)? callfunc      TK_semicolon? |
+    print                           TK_semicolon? |
+    RW_return exp                   TK_semicolon? |
+    RW_return                       TK_semicolon? |
+    RW_continue                     TK_semicolon? |
+    RW_break                        TK_semicolon? ;
 
 type :
     RW_String    |
     RW_Int       |
     RW_Bool      |
     RW_Character |
-    RW_Float     ;
+    RW_Float     |
+    TK_id        ;
 
 exp :
     // ARITHMETICS
@@ -198,12 +233,14 @@ exp :
     TK_id TK_lbrk exp TK_rbrk     |
     TK_id TK_dot RW_isEmpty       |
     TK_id TK_dot RW_count         |
+    // ATTRIBUTES STRUCT
+    (RW_self TK_dot)? useattribs  |
     // CALL FUNCTION
-    callfunc                |
+    (RW_self TK_dot)? callfunc    |
     // NIL
-    n = RW_nil              |
+    n = RW_nil                    |
     // PRIMITIVES
-    id = TK_id              |
+    (RW_self TK_dot)? id = TK_id  |
     p = TK_string           |
     p = TK_char             |
     p = TK_int              |

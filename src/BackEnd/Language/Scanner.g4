@@ -42,6 +42,9 @@ RW_at         : 'at'          ;
 RW_isEmpty    : 'isEmpty'     ;
 RW_count      : 'count'       ;
 RW_repeating  : 'repeating'   ;
+RW_struct     : 'struct'      ;
+RW_mutating   : 'mutating'    ;
+RW_self       : 'self'        ;
 RW_print      : 'print'       ;
 // Operators
 TK_prompt     : '->'          ;

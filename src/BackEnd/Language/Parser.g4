@@ -113,9 +113,6 @@ funcvector :
     TK_id TK_dot RW_removeLast TK_lpar TK_rpar                |
     TK_id TK_dot RW_remove TK_lpar RW_at TK_colon exp TK_rpar ;
 
-reasignvector :
-    TK_id TK_lbrk exp TK_rbrk TK_equ exp ;
-
 decmatrix :
     RW_var TK_id (TK_colon typematrix)? TK_equ defmatrix ;
 
@@ -138,6 +135,14 @@ listvector2 :
 simplematrix :
     typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon exp TK_rpar |
     typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar          ;
+
+
+reasignvector :
+    TK_id dims TK_equ exp ;
+
+dims :
+    TK_lbrk exp TK_rbrk dims |
+    TK_lbrk exp TK_rbrk      ;
 
 defstruct :
     RW_struct TK_id TK_lbrc listattribs TK_rbrc ;
@@ -230,7 +235,7 @@ exp :
     RW_Float  TK_lpar exp TK_rpar |
     RW_String TK_lpar exp TK_rpar |
     // Vector
-    TK_id TK_lbrk exp TK_rbrk     |
+    TK_id dims                    |
     TK_id TK_dot RW_isEmpty       |
     TK_id TK_dot RW_count         |
     // ATTRIBUTES STRUCT

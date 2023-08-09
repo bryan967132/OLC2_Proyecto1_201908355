@@ -2,3 +2,4 @@
 /**/.antlr
 /**/*.interp
 /**/*.tokens
+/**/codemirror

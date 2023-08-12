@@ -1,8 +1,8 @@
 package abstracts
 
 import (
-	env "Modules/Classes/Env"
-	utils "Modules/Classes/Utils"
+	env "TSwift/Classes/Env"
+	utils "TSwift/Classes/Utils"
 )
 
 type Expression interface {

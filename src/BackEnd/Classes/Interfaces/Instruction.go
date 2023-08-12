@@ -1,7 +1,7 @@
 package abstracts
 
 import (
-	env "Modules/Classes/Env"
+	env "TSwift/Classes/Env"
 )
 
 type Instruction interface {

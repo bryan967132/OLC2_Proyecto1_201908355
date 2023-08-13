@@ -3,25 +3,28 @@ grammar Parser;
 @header {
     import (
         expressions "TSwift/Classes/Expressions"
+        instructions "TSwift/Classes/Instructions"
         interfaces "TSwift/Classes/Interfaces"
         utils "TSwift/Classes/Utils"
     )
 }
 
 options {
+    language = Go;
     tokenVocab = Scanner;
 }
 
-init :
-    instsglobal? EOF ;
+init returns[[]interface{} result]:
+    insts = instsglobal? EOF {$result = $insts.result} ;
 
-instsglobal :
-    instglobal instsglobal |
-    instglobal             ;
+instsglobal returns[[]interface{} result]:
+    i = instglobal l = instsglobal {$result = $l.result;; $result = append($result, $i.result)} |
+    i = instglobal                 {$result = []interface{}{$i.result}             } ;
 
-instglobal :
-    instruction |
-    declfunc    ;
+instglobal returns[interface{} result] :
+    inst0 = instruction             {$result = $inst0.result} |
+    inst1 = declfunc                |
+    inst2 = defstruct TK_semicolon? ;
 
 callfunc :
     TK_id TK_lpar listargs? TK_rpar ;
@@ -98,9 +101,9 @@ defvector :
     simplevec                |
     TK_id                    ;
 
-listexp :
-    exp TK_comma listexp |
-    exp                  ;
+listexp returns[[]interfaces.Expression result] :
+    e = exp TK_comma l = listexp {$result = $l.result;; $result = append($result, $e.result)} |
+    e = exp                      {$result = []interfaces.Expression{$e.result}              } ;
 
 simplevec :
     TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
@@ -172,17 +175,17 @@ useattribs1 :
     TK_dot TK_id useattribs1 |
     TK_dot TK_id             ;
 
-print :
-    RW_print TK_lpar listexp? TK_rpar ;
+print returns[interfaces.Instruction result]:
+    p = RW_print TK_lpar exps = listexp? TK_rpar {$result = instructions.NewPrint($p.line, $p.pos, $exps.result)} ;
 
 env :
     TK_lbrc instructions? TK_rbrc ;
 
-instructions :
-    instruction instructions |
-    instruction              ;
+instructions returns[[]interface{} result] :
+    i = instruction l = instructions {$result = $l.result;; $result = append($result, $i.result)} |
+    i = instruction                  {$result = []interface{}{$i.result}                        } ;
 
-instruction :
+instruction returns[interface{} result] :
     decvar                          TK_semicolon? |
     deccst                          TK_semicolon? |
     ifstruct                                      |
@@ -196,11 +199,10 @@ instruction :
     funcvector                      TK_semicolon? |
     (RW_self TK_dot)? reasignvector TK_semicolon? |
     decmatrix                       TK_semicolon? |
-    defstruct                       TK_semicolon? |
     decstruct                       TK_semicolon? |
     (RW_self TK_dot)? useattribs    TK_semicolon? |
     (RW_self TK_dot)? callfunc      TK_semicolon? |
-    print                           TK_semicolon? |
+    inst17 = print                           TK_semicolon? {$result = $inst17.result} |
     RW_return exp                   TK_semicolon? |
     RW_return                       TK_semicolon? |
     RW_continue                     TK_semicolon? |
@@ -224,30 +226,31 @@ exp returns[interfaces.Expression result] :
     e1 = exp s = (TK_less    | TK_more)      e2 = exp |
     e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp |
     // LOGICS
-    s = TK_not e2 = exp          |
-    e1 = exp s = TK_and e2 = exp |
-    e1 = exp s = TK_or  e2 = exp |
+    s = TK_not e2 = exp            |
+    e1 = exp s = TK_and e2 = exp   |
+    e1 = exp s = TK_or  e2 = exp   |
     // CAST
-    RW_Int    TK_lpar exp TK_rpar |
-    RW_Float  TK_lpar exp TK_rpar |
-    RW_String TK_lpar exp TK_rpar |
+    RW_Int    TK_lpar exp TK_rpar  |
+    RW_Float  TK_lpar exp TK_rpar  |
+    RW_String TK_lpar exp TK_rpar  |
     // Vector
-    TK_id dims                    |
-    TK_id TK_dot RW_isEmpty       |
-    TK_id TK_dot RW_count         |
+    TK_id dims                     |
+    TK_id TK_dot RW_isEmpty        |
+    TK_id TK_dot RW_count          |
     // ATTRIBUTES STRUCT
-    (RW_self TK_dot)? useattribs  |
+    (RW_self TK_dot)? useattribs   |
     // CALL FUNCTION
-    (RW_self TK_dot)? callfunc    |
+    (RW_self TK_dot)? callfunc     |
+    // ACCESS ID
+    (RW_self TK_dot)? id = TK_id   |
     // NIL
-    n = RW_nil                    |
+    n = RW_nil                     {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.NIL)    } |
     // PRIMITIVES
-    (RW_self TK_dot)? id = TK_id  |
-    p = TK_string           {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.STRING) } |
-    p = TK_char             {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.CHAR)   } |
-    p = TK_int              {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.INT)    } |
-    p = TK_float            {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.FLOAT)  } |
-    p = RW_true             {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
-    p = RW_false            {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
+    p = TK_string                  {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text[1 : len($p.text) - 1], utils.STRING) } |
+    p = TK_char                    {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text[1 : len($p.text) - 1], utils.CHAR)   } |
+    p = TK_int                     {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.INT)    } |
+    p = TK_float                   {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.FLOAT)  } |
+    p = RW_true                    {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
+    p = RW_false                   {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
     // GROUP
-    TK_lpar e = exp TK_rpar {$result = $e.result} ;
+    TK_lpar e = exp TK_rpar        {$result = $e.result} ;

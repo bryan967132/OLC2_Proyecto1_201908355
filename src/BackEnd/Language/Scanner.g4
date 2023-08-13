@@ -1,5 +1,9 @@
 lexer grammar Scanner;
 
+options {
+    language = Go;
+}
+
 fragment UNUSED   : [ \r\t]+                            ;
 fragment CONTENT  : (~('\n'|'"'|'\\')|'\\'.)            ;
 fragment ID       : ('_')*[a-zA-Z][a-zA-Z0-9_]*         ;

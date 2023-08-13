@@ -5,24 +5,33 @@ import (
 	abstracts "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	"fmt"
+	"sort"
 )
 
 type Print struct {
 	Line     int
 	Column   int
 	TypeInst utils.TypeInst
-	Exp      abstracts.Expression
+	Exps     []abstracts.Expression
 }
 
-func (prt *Print) NewPrint(line int, column int, exp abstracts.Expression) *Print {
-	return &Print{Line: line, Column: column, Exp: exp, TypeInst: utils.PRINT}
+func NewPrint(line int, column int, exps []abstracts.Expression) *Print {
+	return &Print{line, column, utils.PRINT, exps}
 }
 
-func (prt *Print) Exec(env *env.Env) {
+func (prt *Print) Exec(env *env.Env) interface{} {
 	value := ""
-	if prt.Exp != nil {
-		value1 := prt.Exp.Exec(env)
-		value = fmt.Sprintf("%v", value1.Value)
+	if prt.Exps != nil {
+		sort.Slice(prt.Exps, func(i, j int) bool { return true })
+		for i := 0; i < len(prt.Exps); i++ {
+			value1 := prt.Exps[i].Exec(env)
+			if value != "" {
+				value = fmt.Sprintf("%s %v", value, value1.Value)
+			} else {
+				value = fmt.Sprintf("%v", value1.Value)
+			}
+		}
 	}
 	fmt.Println(value)
+	return nil
 }

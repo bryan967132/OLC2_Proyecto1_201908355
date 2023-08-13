@@ -1,4 +1,4 @@
-package abstracts
+package interfaces
 
 import (
 	env "TSwift/Classes/Env"

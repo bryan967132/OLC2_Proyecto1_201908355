@@ -1,5 +1,13 @@
 grammar Parser;
 
+@header {
+    import (
+        expressions "TSwift/Classes/Expressions"
+        interfaces "TSwift/Classes/Interfaces"
+        utils "TSwift/Classes/Utils"
+    )
+}
+
 options {
     tokenVocab = Scanner;
 }
@@ -235,11 +243,11 @@ exp returns[interfaces.Expression result] :
     n = RW_nil                    |
     // PRIMITIVES
     (RW_self TK_dot)? id = TK_id  |
-    p = TK_string           |
-    p = TK_char             |
-    p = TK_int              |
-    p = TK_float            |
-    p = RW_true             |
-    p = RW_false            |
+    p = TK_string           {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.STRING) } |
+    p = TK_char             {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.CHAR)   } |
+    p = TK_int              {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.INT)    } |
+    p = TK_float            {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.FLOAT)  } |
+    p = RW_true             {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
+    p = RW_false            {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.BOOLEAN)} |
     // GROUP
-    TK_lpar e = exp TK_rpar ;
+    TK_lpar e = exp TK_rpar {$result = $e.result} ;

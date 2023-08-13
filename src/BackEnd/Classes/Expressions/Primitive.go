@@ -14,6 +14,10 @@ type Primitive struct {
 	Type    utils.Type
 }
 
+func NewPrimitive(line, column int, value interface{}, typeD utils.Type) *Primitive {
+	return &Primitive{line, column, utils.PRIMITIVE, value, typeD}
+}
+
 func (pr *Primitive) Exec(env *env.Env) *utils.ReturnType {
 	switch pr.Type {
 	case utils.INT:

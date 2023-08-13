@@ -1,18 +1,7 @@
 grammar Parser;
 
-tokens {
-    RW_Int, RW_Float, RW_String, RW_Bool, RW_Character, RW_var, RW_let,
-    RW_if, RW_else, RW_for, RW_while, RW_guard, RW_switch, RW_case, RW_default,
-    RW_break, RW_continue, RW_return,
-    RW_true, RW_false, RW_nil, RW_func, RW_inout, RW_in,
-    RW_append, RW_removeLast, RW_remove, RW_at, RW_isEmpty, RW_count, RW_repeating,
-    RW_struct, RW_mutating, RW_self, RW_print, TK_prompt, TK_under,
-    TK_char, TK_string, TK_int, TK_float, TK_id, TK_add, TK_sub,
-    TK_plus, TK_minus, TK_mult, TK_div, TK_mod,
-    TK_equequ, TK_notequ, TK_lessequ, TK_moreequ, TK_equ, TK_less, TK_more,
-    TK_and, TK_or, TK_not,
-    TK_lpar, TK_rpar, TK_lbrc, TK_rbrc, TK_lbrk, TK_rbrk,
-    TK_dot, TK_comma, TK_colon, TK_semicolon, TK_question, TK_amp
+options {
+    tokenVocab = Scanner;
 }
 
 init :
@@ -176,7 +165,7 @@ useattribs1 :
     TK_dot TK_id             ;
 
 print :
-    RW_print TK_lpar exp? TK_rpar ;
+    RW_print TK_lpar listexp? TK_rpar ;
 
 env :
     TK_lbrc instructions? TK_rbrc ;
@@ -217,7 +206,7 @@ type :
     RW_Float     |
     TK_id        ;
 
-exp :
+exp returns[interfaces.Expression result] :
     // ARITHMETICS
     s = TK_minus e2 = exp                             |
     e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp |

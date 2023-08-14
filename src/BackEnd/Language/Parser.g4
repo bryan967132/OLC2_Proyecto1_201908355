@@ -218,9 +218,9 @@ type :
 
 exp returns[interfaces.Expression result] :
     // ARITHMETICS
-    s = TK_minus e2 = exp                             |
-    e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp |
-    e1 = exp s = (TK_plus | TK_minus)        e2 = exp |
+    s = TK_minus e2 = exp                             {$result = expressions.NewArithmetic($s.line, $s.pos, nil, $s.text, $e2.result)                                } |
+    e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp {$result = expressions.NewArithmetic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
+    e1 = exp s = (TK_plus | TK_minus)        e2 = exp {$result = expressions.NewArithmetic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // RELATIONALS
     e1 = exp s = (TK_lessequ | TK_moreequ)   e2 = exp |
     e1 = exp s = (TK_less    | TK_more)      e2 = exp |

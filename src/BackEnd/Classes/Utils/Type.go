@@ -5,9 +5,9 @@ type Type int
 const (
 	INT Type = iota
 	FLOAT
+	STRING
 	BOOLEAN
 	CHAR
-	STRING
 	NIL
 	VECTOR
 	MATRIX

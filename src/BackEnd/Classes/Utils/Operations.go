@@ -1,31 +1,31 @@
 package utils
 
-var plus = [][]Type{
+var Plus = [][]Type{
 	//	     INT    FLOAT  STR
 	/*INT*/ {INT, FLOAT, NIL},
 	/*FLT*/ {FLOAT, FLOAT, NIL},
 	/*STR*/ {NIL, NIL, STRING},
 }
 
-var minus = [][]Type{
+var Minus = [][]Type{
 	//	     INT    FLOAT
 	/*INT*/ {INT, FLOAT},
 	/*FLT*/ {FLOAT, FLOAT},
 }
 
-var mult = [][]Type{
+var Mult = [][]Type{
 	//	     INT    FLOAT
 	/*INT*/ {INT, FLOAT},
 	/*FLT*/ {FLOAT, FLOAT},
 }
 
-var div = [][]Type{
+var Div = [][]Type{
 	//	     INT    FLOAT
 	/*INT*/ {INT, FLOAT},
 	/*FLT*/ {FLOAT, FLOAT},
 }
 
-var mod = [][]Type{
+var Mod = [][]Type{
 	//	     INT
 	/*INT*/ {INT},
 }

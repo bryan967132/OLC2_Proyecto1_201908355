@@ -71,6 +71,7 @@ func (ar *Arithmetic) plus(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: fmt.Sprintf("%v%v", value1.Value, value2.Value), Type: ar.Type}
 		}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -92,6 +93,7 @@ func (ar *Arithmetic) minus(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: floatValue1 - floatValue2, Type: ar.Type}
 		}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -105,6 +107,7 @@ func (ar *Arithmetic) uminus(env *env.Env) *utils.ReturnType {
 		floatValue2, _ := strconv.ParseFloat(fmt.Sprintf("%v", value2.Value), 64)
 		return &utils.ReturnType{Value: -floatValue2, Type: ar.Type}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -126,6 +129,7 @@ func (ar *Arithmetic) mult(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: floatValue1 * floatValue2, Type: ar.Type}
 		}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -147,6 +151,7 @@ func (ar *Arithmetic) div(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: floatValue1 / floatValue2, Type: ar.Type}
 		}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -163,5 +168,6 @@ func (ar *Arithmetic) mod(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: value1.Value.(int) % value2.Value.(int), Type: ar.Type}
 		}
 	}
+	env.SetError(fmt.Sprintf("%s %v:%v", "Error: Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }

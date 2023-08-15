@@ -222,9 +222,9 @@ exp returns[interfaces.Expression result] :
     e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp {$result = expressions.NewArithmetic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     e1 = exp s = (TK_plus | TK_minus)        e2 = exp {$result = expressions.NewArithmetic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // RELATIONALS
-    e1 = exp s = (TK_lessequ | TK_moreequ)   e2 = exp |
-    e1 = exp s = (TK_less    | TK_more)      e2 = exp |
-    e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp |
+    e1 = exp s = (TK_lessequ | TK_moreequ)   e2 = exp {$result = expressions.NewRelational($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
+    e1 = exp s = (TK_less    | TK_more)      e2 = exp {$result = expressions.NewRelational($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
+    e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp {$result = expressions.NewRelational($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // LOGICS
     s = TK_not e2 = exp           {$result = expressions.NewLogic($s.line, $s.pos, nil, $s.text, $e2.result)                                } |
     e1 = exp s = TK_and e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |

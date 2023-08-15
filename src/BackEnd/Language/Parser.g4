@@ -18,8 +18,8 @@ init returns[[]interface{} result]:
     insts = instsglobal? EOF {$result = $insts.result} ;
 
 instsglobal returns[[]interface{} result]:
-    i = instglobal l = instsglobal {$result = $l.result;; $result = append($result, $i.result)} |
-    i = instglobal                 {$result = []interface{}{$i.result}             } ;
+    l = instsglobal i = instglobal {$result = $l.result;; $result = append($result, $i.result)} |
+    i = instglobal                 {$result = []interface{}{$i.result}                        } ;
 
 instglobal returns[interface{} result] :
     inst0 = instruction             {$result = $inst0.result} |
@@ -102,7 +102,7 @@ defvector :
     TK_id                    ;
 
 listexp returns[[]interfaces.Expression result] :
-    e = exp TK_comma l = listexp {$result = $l.result;; $result = append($result, $e.result)} |
+    l = listexp TK_comma e = exp {$result = $l.result;; $result = append($result, $e.result)} |
     e = exp                      {$result = []interfaces.Expression{$e.result}              } ;
 
 simplevec :
@@ -182,7 +182,7 @@ env :
     TK_lbrc instructions? TK_rbrc ;
 
 instructions returns[[]interface{} result] :
-    i = instruction l = instructions {$result = $l.result;; $result = append($result, $i.result)} |
+    l = instructions i = instruction {$result = $l.result;; $result = append($result, $i.result)} |
     i = instruction                  {$result = []interface{}{$i.result}                        } ;
 
 instruction returns[interface{} result] :

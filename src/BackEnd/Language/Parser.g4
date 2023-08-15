@@ -66,7 +66,7 @@ casesdefault :
     default       ;
 
 cases :
-    case cases |
+    cases case |
     case       ;
 
 case :
@@ -148,7 +148,7 @@ defstruct :
     RW_struct TK_id TK_lbrc listattribs TK_rbrc ;
 
 listattribs :
-    attrib TK_semicolon? listattribs |
+    listattribs TK_semicolon? attrib |
     attrib TK_semicolon?             ;
 
 attrib :

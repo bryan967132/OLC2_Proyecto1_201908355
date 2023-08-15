@@ -4,6 +4,7 @@ type Env struct {
 	Prints   []string
 	Errors   []string
 	previous *Env
+	name     string
 }
 
 func (env *Env) SetError(errorD string) {
@@ -11,5 +12,5 @@ func (env *Env) SetError(errorD string) {
 }
 
 func NewEnv(previous *Env, name string) *Env {
-	return &Env{[]string{}, []string{}, nil}
+	return &Env{[]string{}, []string{}, previous, name}
 }

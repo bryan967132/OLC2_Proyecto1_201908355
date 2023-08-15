@@ -1,12 +1,12 @@
 package main
 
 import (
+	env "TSwift/Classes/Env"
 	interfaces "TSwift/Classes/Interfaces"
 	listener "TSwift/Language"
 	parser "TSwift/Language/Parser"
 	"fmt"
 	"io/ioutil"
-	"sort"
 
 	"github.com/antlr4-go/antlr/v4"
 )
@@ -27,9 +27,9 @@ func main() {
 	tree := parser.Init()
 	var listener *listener.TSwfitListener = listener.NewTSwfitListener()
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	Code := listener.Code
-	sort.Slice(Code, func(i, j int) bool { return true })
-	for _, inst := range Code {
-		inst.(interfaces.Instruction).Exec(nil)
+	execute := listener.Code
+	global := env.NewEnv(nil, "Global")
+	for _, instruction := range execute {
+		instruction.(interfaces.Instruction).Exec(global)
 	}
 }

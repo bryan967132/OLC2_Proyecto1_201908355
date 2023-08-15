@@ -226,9 +226,9 @@ exp returns[interfaces.Expression result] :
     e1 = exp s = (TK_less    | TK_more)      e2 = exp |
     e1 = exp s = (TK_equequ  | TK_notequ)    e2 = exp |
     // LOGICS
-    s = TK_not e2 = exp            |
-    e1 = exp s = TK_and e2 = exp   |
-    e1 = exp s = TK_or  e2 = exp   |
+    s = TK_not e2 = exp           {$result = expressions.NewLogic($s.line, $s.pos, nil, $s.text, $e2.result)                                } |
+    e1 = exp s = TK_and e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
+    e1 = exp s = TK_or  e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // CAST
     RW_Int    TK_lpar exp TK_rpar  |
     RW_Float  TK_lpar exp TK_rpar  |

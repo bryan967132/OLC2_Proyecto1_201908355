@@ -208,13 +208,13 @@ instruction returns[interface{} result] :
     RW_continue                     TK_semicolon? |
     RW_break                        TK_semicolon? ;
 
-type :
-    RW_String    |
-    RW_Int       |
-    RW_Bool      |
-    RW_Character |
-    RW_Float     |
-    TK_id        ;
+type returns[utils.AttribsType result] :
+    t = RW_String    {$result = *utils.NewAttribsType($t.line, $t.pos, utils.STRING) } |
+    t = RW_Int       {$result = *utils.NewAttribsType($t.line, $t.pos, utils.INT)    } |
+    t = RW_Bool      {$result = *utils.NewAttribsType($t.line, $t.pos, utils.BOOLEAN)} |
+    t = RW_Character {$result = *utils.NewAttribsType($t.line, $t.pos, utils.CHAR)   } |
+    t = RW_Float     {$result = *utils.NewAttribsType($t.line, $t.pos, utils.FLOAT)  } |
+    t = TK_id        {$result = *utils.NewAttribsType($t.line, $t.pos, $t.text)      } ;
 
 exp returns[interfaces.Expression result] :
     // ARITHMETICS

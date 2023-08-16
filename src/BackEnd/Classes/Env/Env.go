@@ -1,5 +1,7 @@
 package env
 
+import "fmt"
+
 type Env struct {
 	Prints   []string
 	Errors   []string
@@ -13,4 +15,11 @@ func (env *Env) SetError(errorD string) {
 
 func NewEnv(previous *Env, name string) *Env {
 	return &Env{[]string{}, []string{}, previous, name}
+}
+
+func (env *Env) PrintErrors() {
+	fmt.Println("\nErrores")
+	for _, Error := range env.Errors {
+		fmt.Println(Error)
+	}
 }

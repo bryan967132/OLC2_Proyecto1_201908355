@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	filePath := "../../../Inputs/Input5.swift"
+	filePath := "../../../Inputs/Input6.swift"
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error al leer el archivo:", err)
@@ -32,4 +32,6 @@ func main() {
 	for _, instruction := range execute {
 		instruction.(interfaces.Instruction).Exec(global)
 	}
+	global.PrintPrints()
+	global.PrintErrors()
 }

@@ -176,10 +176,12 @@ useattribs1 :
     TK_dot TK_id             ;
 
 print returns[interfaces.Instruction result]:
-    p = RW_print TK_lpar exps = listexp? TK_rpar {$result = instructions.NewPrint($p.line, $p.pos, $exps.result)} ;
+    p = RW_print TK_lpar exps = listexp TK_rpar {$result = instructions.NewPrint($p.line, $p.pos, $exps.result)} |
+    p = RW_print TK_lpar TK_rpar                {$result = instructions.NewPrint($p.line, $p.pos, nil)         } ;
 
 env :
-    TK_lbrc instructions? TK_rbrc ;
+    TK_lbrc instructions? TK_rbrc |
+    TK_lbrc TK_rbrc               ;
 
 instructions returns[[]interface{} result] :
     l = instructions i = instruction {$result = $l.result;; $result = append($result, $i.result)} |
@@ -230,9 +232,7 @@ exp returns[interfaces.Expression result] :
     e1 = exp s = TK_and e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     e1 = exp s = TK_or  e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // CAST
-    RW_Int    TK_lpar exp TK_rpar  |
-    RW_Float  TK_lpar exp TK_rpar  |
-    RW_String TK_lpar exp TK_rpar  |
+    t = type TK_lpar e = exp TK_rpar {$result = expressions.NewCast($t.result.Line, $t.result.Column, $t.result.Value.(utils.Type), $e.result)} |
     // Vector
     TK_id dims                     |
     TK_id TK_dot RW_isEmpty        |

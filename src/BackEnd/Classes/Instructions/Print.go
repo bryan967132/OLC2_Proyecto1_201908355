@@ -30,6 +30,6 @@ func (prt *Print) Exec(env *env.Env) interface{} {
 			}
 		}
 	}
-	fmt.Println(value)
+	env.SetPrints(value)
 	return nil
 }

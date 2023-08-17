@@ -18,6 +18,14 @@ func NewPrint(line int, column int, exps []interfaces.Expression) *Print {
 	return &Print{line, column, utils.PRINT, exps}
 }
 
+func (prt *Print) LineN() int {
+	return prt.Line
+}
+
+func (prt *Print) ColumnN() int {
+	return prt.Column
+}
+
 func (prt *Print) Exec(env *env.Env) interface{} {
 	value := ""
 	if prt.Exps != nil {

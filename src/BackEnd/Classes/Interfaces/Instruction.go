@@ -5,5 +5,7 @@ import (
 )
 
 type Instruction interface {
+	LineN() int
+	ColumnN() int
 	Exec(env *env.Env) interface{}
 }

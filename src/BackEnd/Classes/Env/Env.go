@@ -1,8 +1,12 @@
 package env
 
-import "fmt"
+import (
+	utils "TSwift/Classes/Utils"
+	"fmt"
+)
 
 type Env struct {
+	Ids      *map[string]*Symbol
 	Prints   []string
 	Errors   []string
 	previous *Env
@@ -10,7 +14,28 @@ type Env struct {
 }
 
 func NewEnv(previous *Env, name string) *Env {
-	return &Env{[]string{}, []string{}, previous, name}
+	return &Env{&map[string]*Symbol{}, []string{}, []string{}, previous, name}
+}
+
+func (env *Env) SaveID(id string, value interface{}, Type utils.Type, line, column int) bool {
+	if _, exists := (*env.Ids)[id]; !exists {
+		(*env.Ids)[id] = &Symbol{Value: value, Id: id, Type: Type}
+		return true
+	}
+	env.SetError(fmt.Sprintf("Declaración de variable existente. %v:%v", line, column))
+	return false
+}
+
+func (env *Env) GetValueID(id string, line, column int) *Symbol {
+	var current *Env = env
+	for current != nil {
+		if _, exists := (*env.Ids)[id]; exists {
+			return (*env.Ids)[id]
+		}
+		current = current.previous
+	}
+	env.SetError(fmt.Sprintf("Acceso a variable inexistente. %v:%v", line, column))
+	return nil
 }
 
 func (env *Env) SetPrints(print string) {

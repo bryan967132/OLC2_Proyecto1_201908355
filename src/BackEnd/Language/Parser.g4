@@ -15,7 +15,8 @@ options {
 }
 
 init returns[[]interface{} result]:
-    insts = instsglobal? EOF {$result = $insts.result} ;
+    insts = instsglobal EOF {$result = $insts.result  } |
+    EOF                     {$result = []interface{}{}} ;
 
 instsglobal returns[[]interface{} result]:
     l = instsglobal i = instglobal {$result = $l.result;; $result = append($result, $i.result)} |
@@ -33,10 +34,10 @@ listargs :
     (TK_id TK_colon)? TK_amp? exp TK_comma listargs |
     (TK_id TK_colon)? TK_amp? exp                   ;
 
-decvar :
-    RW_var TK_id TK_colon type TK_equ exp  |
-    RW_var TK_id TK_colon type TK_question |
-    RW_var TK_id TK_equ exp                ;
+decvar returns[interfaces.Instruction result] :
+    d = RW_var id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, $id.text, $t.result.Value.(utils.Type), $e.result)} |
+    d = RW_var id = TK_id TK_colon t = type TK_question    {$result = instructions.NewInitID($d.line, $d.pos, $id.text, $t.result.Value.(utils.Type), nil)      } |
+    d = RW_var id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, $id.text, utils.NIL, $e.result)                   } ;
 
 deccst :
     RW_let TK_id TK_colon type TK_equ exp  |
@@ -188,7 +189,7 @@ instructions returns[[]interface{} result] :
     i = instruction                  {$result = []interface{}{$i.result}                        } ;
 
 instruction returns[interface{} result] :
-    decvar                          TK_semicolon? |
+    inst1 =  decvar                          TK_semicolon? {$result = $inst1.result} |
     deccst                          TK_semicolon? |
     ifstruct                                      |
     switchstruct                                  |
@@ -242,7 +243,7 @@ exp returns[interfaces.Expression result] :
     // CALL FUNCTION
     (RW_self TK_dot)? callfunc     |
     // ACCESS ID
-    (RW_self TK_dot)? id = TK_id   |
+    (RW_self TK_dot)? id = TK_id   {$result = expressions.NewAccessID($id.line, $id.pos, $id.text)             }|
     // NIL
     n = RW_nil                     {$result = expressions.NewPrimitive($p.line, $p.pos, $p.text, utils.NIL)    } |
     // PRIMITIVES

@@ -27,7 +27,7 @@ func (ac *AccessID) ColumnN() int {
 func (ac *AccessID) Exec(env *env.Env) *utils.ReturnType {
 	value := env.GetValueID(ac.Id, ac.Line, ac.Column)
 	if value != nil {
-		return &utils.ReturnType{Value: value.Value, Type: value.Type}
+		return &utils.ReturnType{Value: value.Value.(*utils.ReturnType).Value, Type: value.Value.(*utils.ReturnType).Type}
 	}
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

@@ -37,7 +37,7 @@ func (ct *Cast) Exec(env *env.Env) *utils.ReturnType {
 			floatValue, _ := strconv.ParseFloat(fmt.Sprintf("%v", value.Value), 64)
 			return &utils.ReturnType{Value: int(floatValue), Type: ct.Destiny}
 		}
-		if value.Type == utils.STRING {
+		if value.Type == utils.STRING || value.Type == utils.CHAR {
 			if ct.isValidNumericalString(fmt.Sprintf("%v", value.Value)) {
 				floatValue, _ := strconv.ParseFloat(fmt.Sprintf("%v", value.Value), 64)
 				return &utils.ReturnType{Value: int(floatValue), Type: ct.Destiny}

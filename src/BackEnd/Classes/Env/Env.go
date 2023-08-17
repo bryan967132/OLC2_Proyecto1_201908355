@@ -17,7 +17,7 @@ func NewEnv(previous *Env, name string) *Env {
 	return &Env{&map[string]*Symbol{}, []string{}, []string{}, previous, name}
 }
 
-func (env *Env) SaveID(id string, value interface{}, Type utils.Type, line, column int) bool {
+func (env *Env) SaveID(id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
 		(*env.Ids)[id] = &Symbol{Value: value, Id: id, Type: Type}
 		return true
@@ -36,6 +36,23 @@ func (env *Env) GetValueID(id string, line, column int) *Symbol {
 	}
 	env.SetError(fmt.Sprintf("Acceso a variable inexistente. %v:%v", line, column))
 	return nil
+}
+
+func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) bool {
+	var current *Env = env
+	for current != nil {
+		if _, exists := (*env.Ids)[id]; exists {
+			if (*env.Ids)[id].Type == value.Type {
+				(*env.Ids)[id].Value = value
+				return true
+			}
+			env.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. %v:%v", line, column))
+			return false
+		}
+		current = current.previous
+	}
+	env.SetError(fmt.Sprintf("Asignación de valor a variable inexistente. %v:%v", line, column))
+	return false
 }
 
 func (env *Env) SetPrints(print string) {

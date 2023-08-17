@@ -88,8 +88,8 @@ loopwhile :
 guard :
     RW_guard exp RW_else env ;
 
-reasign :
-    TK_id TK_equ exp ;
+reasign returns[interfaces.Instruction result] :
+    id = TK_id TK_equ e = exp {$result = instructions.NewAsignID($id.line, $id.pos, $id.text, $e.result)} ;
 
 addsub :
     TK_id (TK_add | TK_sub) exp ;
@@ -196,7 +196,7 @@ instruction returns[interface{} result] :
     loopfor                                       |
     loopwhile                                     |
     guard                                         |
-    (RW_self TK_dot)? reasign       TK_semicolon? |
+    (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result}|
     (RW_self TK_dot)? addsub        TK_semicolon? |
     decvector                       TK_semicolon? |
     funcvector                      TK_semicolon? |

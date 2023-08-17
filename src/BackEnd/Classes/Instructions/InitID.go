@@ -32,14 +32,14 @@ func (in *InitID) Exec(env *env.Env) interface{} {
 	if in.Value != nil {
 		value := in.Value.Exec(env)
 		if in.Type != utils.NIL {
-			if in.Type == value.Type {
-				env.SaveID(in.Id, value.Value, value.Type, in.Line, in.Column)
+			if in.Type == value.Type || in.Type == utils.STRING && value.Type == utils.CHAR || in.Type == utils.FLOAT && value.Type == utils.INT {
+				env.SaveID(in.Id, &utils.ReturnType{Value: value.Value, Type: in.Type}, in.Type, in.Line, in.Column)
 				return nil
 			}
 			env.SetError(fmt.Sprintf("Los tipos no coinciden en la declaración. %v:%v", in.Line, in.Column))
 			return nil
 		}
-		env.SaveID(in.Id, value.Value, value.Type, in.Line, in.Column)
+		env.SaveID(in.Id, &utils.ReturnType{Value: value.Value, Type: value.Type}, in.Type, in.Line, in.Column)
 	} else {
 		env.SaveID(in.Id, &utils.ReturnType{Value: "nil", Type: utils.NIL}, in.Type, in.Line, in.Column)
 	}

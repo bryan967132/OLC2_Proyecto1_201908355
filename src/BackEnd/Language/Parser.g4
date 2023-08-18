@@ -35,13 +35,13 @@ listargs :
     (TK_id TK_colon)? TK_amp? exp                   ;
 
 decvar returns[interfaces.Instruction result] :
-    d = RW_var id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, $id.text, $t.result.Value.(utils.Type), $e.result)} |
-    d = RW_var id = TK_id TK_colon t = type TK_question    {$result = instructions.NewInitID($d.line, $d.pos, $id.text, $t.result.Value.(utils.Type), nil)      } |
-    d = RW_var id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, $id.text, utils.NIL, $e.result)                   } ;
+    d = RW_var id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, true, $id.text, $t.result.Value.(utils.Type), $e.result)} |
+    d = RW_var id = TK_id TK_colon t = type TK_question    {$result = instructions.NewInitID($d.line, $d.pos, true, $id.text, $t.result.Value.(utils.Type), nil)      } |
+    d = RW_var id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, true, $id.text, utils.NIL, $e.result)                   } ;
 
-deccst :
-    RW_let TK_id TK_colon type TK_equ exp  |
-    RW_let TK_id TK_equ exp                ;
+deccst returns[interfaces.Instruction result] :
+    d = RW_let id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, $t.result.Value.(utils.Type), $e.result)} |
+    d = RW_let id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, utils.NIL, $e.result)                   } ;
 
 declfunc :
     RW_func TK_id TK_lpar listparams? TK_rpar (TK_prompt type)? env ;
@@ -190,7 +190,7 @@ instructions returns[[]interface{} result] :
 
 instruction returns[interface{} result] :
     inst1 =  decvar                          TK_semicolon? {$result = $inst1.result} |
-    deccst                          TK_semicolon? |
+    inst2 =  deccst                          TK_semicolon? {$result = $inst2.result} |
     ifstruct                                      |
     switchstruct                                  |
     loopfor                                       |

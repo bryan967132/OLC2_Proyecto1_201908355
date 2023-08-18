@@ -40,7 +40,7 @@ func (in *InitID) Exec(env *env.Env) interface{} {
 			env.SetError(fmt.Sprintf("Los tipos no coinciden en la declaración. %v:%v", in.Line, in.Column))
 			return nil
 		}
-		env.SaveID(in.IsVariable, in.Id, &utils.ReturnType{Value: value.Value, Type: value.Type}, in.Type, in.Line, in.Column)
+		env.SaveID(in.IsVariable, in.Id, &utils.ReturnType{Value: value.Value, Type: value.Type}, value.Type, in.Line, in.Column)
 	} else {
 		env.SaveID(in.IsVariable, in.Id, &utils.ReturnType{Value: "nil", Type: utils.NIL}, in.Type, in.Line, in.Column)
 	}

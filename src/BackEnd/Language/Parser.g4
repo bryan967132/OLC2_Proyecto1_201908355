@@ -44,7 +44,10 @@ deccst returns[interfaces.Instruction result] :
     d = RW_let id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, utils.NIL, $e.result)                   } ;
 
 declfunc :
-    RW_func TK_id TK_lpar listparams? TK_rpar (TK_prompt type)? env ;
+    RW_func TK_id TK_lpar listparams TK_rpar TK_prompt type env |
+    RW_func TK_id TK_lpar listparams TK_rpar env                |
+    RW_func TK_id TK_lpar TK_rpar TK_prompt type env            |
+    RW_func TK_id TK_lpar TK_rpar env                           ;
 
 listparams :
     (TK_id | TK_under)? TK_id TK_colon RW_inout? type TK_comma listparams |

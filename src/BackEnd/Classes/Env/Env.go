@@ -7,14 +7,12 @@ import (
 
 type Env struct {
 	Ids      *map[string]*Symbol
-	Prints   []string
-	Errors   []string
 	previous *Env
-	name     string
+	Name     string
 }
 
 func NewEnv(previous *Env, name string) *Env {
-	return &Env{&map[string]*Symbol{}, []string{}, []string{}, previous, name}
+	return &Env{&map[string]*Symbol{}, previous, name}
 }
 
 func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
@@ -29,8 +27,8 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 func (env *Env) GetValueID(id string, line, column int) *Symbol {
 	var current *Env = env
 	for current != nil {
-		if _, exists := (*env.Ids)[id]; exists {
-			return (*env.Ids)[id]
+		if _, exists := (*current.Ids)[id]; exists {
+			return (*current.Ids)[id]
 		}
 		current = current.previous
 	}
@@ -60,26 +58,26 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 }
 
 func (env *Env) SetPrints(print string) {
-	env.Prints = append(env.Prints, print)
+	utils.PrintConsole = append(utils.PrintConsole, print)
 }
 
 func (env *Env) PrintPrints() {
 	fmt.Println("\nTSwift:")
-	if len(env.Prints) > 0 {
-		for _, Print := range env.Prints {
+	if len(utils.PrintConsole) > 0 {
+		for _, Print := range utils.PrintConsole {
 			fmt.Println(Print)
 		}
 	}
 }
 
 func (env *Env) SetError(errorD string) {
-	env.Errors = append(env.Errors, errorD)
+	utils.Errors = append(utils.Errors, errorD)
 }
 
 func (env *Env) PrintErrors() {
-	if len(env.Errors) > 0 {
+	if len(utils.Errors) > 0 {
 		fmt.Println("\nERRORES:")
-		for _, Error := range env.Errors {
+		for _, Error := range utils.Errors {
 			fmt.Println(Error)
 		}
 	}

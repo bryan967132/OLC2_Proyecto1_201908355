@@ -52,6 +52,10 @@ func (ar *Arithmetic) Exec(env *env.Env) *utils.ReturnType {
 
 func (ar *Arithmetic) plus(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
+	if value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+		return &utils.ReturnType{Value: "nil", Type: ar.Type}
+	}
 	value2 := ar.Exp2.Exec(env)
 	if int(value1.Type) < len(utils.Plus) && int(value2.Type) < len(utils.Plus[0]) {
 		ar.Type = utils.Plus[value1.Type][value2.Type]
@@ -71,12 +75,16 @@ func (ar *Arithmetic) plus(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: fmt.Sprintf("%v%v", value1.Value, value2.Value), Type: ar.Type}
 		}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
 func (ar *Arithmetic) minus(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
+	if value1.Type == utils.STRING || value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+		return &utils.ReturnType{Value: "nil", Type: ar.Type}
+	}
 	value2 := ar.Exp2.Exec(env)
 	if int(value1.Type) < len(utils.Minus) && int(value2.Type) < len(utils.Minus[0]) {
 		ar.Type = utils.Minus[value1.Type][value2.Type]
@@ -93,7 +101,7 @@ func (ar *Arithmetic) minus(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: floatValue1 - floatValue2, Type: ar.Type}
 		}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
@@ -107,12 +115,16 @@ func (ar *Arithmetic) uminus(env *env.Env) *utils.ReturnType {
 		floatValue2, _ := strconv.ParseFloat(fmt.Sprintf("%v", value2.Value), 64)
 		return &utils.ReturnType{Value: -floatValue2, Type: ar.Type}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
 func (ar *Arithmetic) mult(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
+	if value1.Type == utils.STRING || value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+		return &utils.ReturnType{Value: "nil", Type: ar.Type}
+	}
 	value2 := ar.Exp2.Exec(env)
 	if int(value1.Type) < len(utils.Mult) && int(value2.Type) < len(utils.Mult[0]) {
 		ar.Type = utils.Mult[value1.Type][value2.Type]
@@ -129,12 +141,16 @@ func (ar *Arithmetic) mult(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: floatValue1 * floatValue2, Type: ar.Type}
 		}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
 func (ar *Arithmetic) div(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
+	if value1.Type == utils.STRING || value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+		return &utils.ReturnType{Value: "nil", Type: ar.Type}
+	}
 	value2 := ar.Exp2.Exec(env)
 	if int(value1.Type) < len(utils.Div) && int(value2.Type) < len(utils.Div[0]) {
 		ar.Type = utils.Div[value1.Type][value2.Type]
@@ -146,7 +162,7 @@ func (ar *Arithmetic) div(env *env.Env) *utils.ReturnType {
 			if value2.Value.(int) != 0 {
 				return &utils.ReturnType{Value: value1.Value.(int) / value2.Value.(int), Type: ar.Type}
 			}
-			env.SetError(fmt.Sprintf("%s %v:%v", "División entre cero.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+			env.SetError(fmt.Sprintf("%s %v:%v", "División entre cero.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 			return &utils.ReturnType{Value: "nil", Type: ar.Type}
 		}
 		if ar.Type == utils.FLOAT {
@@ -159,12 +175,16 @@ func (ar *Arithmetic) div(env *env.Env) *utils.ReturnType {
 			return &utils.ReturnType{Value: "nil", Type: ar.Type}
 		}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }
 
 func (ar *Arithmetic) mod(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
+	if value1.Type == utils.FLOAT || value1.Type == utils.STRING || value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+		return &utils.ReturnType{Value: "nil", Type: ar.Type}
+	}
 	value2 := ar.Exp2.Exec(env)
 	if int(value1.Type) < len(utils.Mod) && int(value2.Type) < len(utils.Mod[0]) {
 		ar.Type = utils.Mod[value1.Type][value2.Type]
@@ -176,10 +196,10 @@ func (ar *Arithmetic) mod(env *env.Env) *utils.ReturnType {
 			if value2.Value.(int) != 0 {
 				return &utils.ReturnType{Value: value1.Value.(int) / value2.Value.(int), Type: ar.Type}
 			}
-			env.SetError(fmt.Sprintf("%s %v:%v", "División entre cero.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+			env.SetError(fmt.Sprintf("%s %v:%v", "División entre cero.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 			return &utils.ReturnType{Value: "nil", Type: ar.Type}
 		}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no coinciden para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
+	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 	return &utils.ReturnType{Value: "nil", Type: ar.Type}
 }

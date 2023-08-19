@@ -43,11 +43,11 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 	for current != nil {
 		if _, exists := (*env.Ids)[id]; exists {
 			if (*env.Ids)[id].IsVariable {
-				if (*env.Ids)[id].Type == value.Type {
+				if (*env.Ids)[id].Type == value.Type || (*env.Ids)[id].Type == utils.STRING && value.Type == utils.CHAR || (*env.Ids)[id].Type == utils.FLOAT && value.Type == utils.INT {
 					(*env.Ids)[id].Value = value
 					return true
 				}
-				env.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. %v:%v", line, column))
+				env.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", env.getType(value.Type), env.getType((*env.Ids)[id].Type), line, column))
 				return false
 			}
 			env.SetError(fmt.Sprintf("Asignación de valor a constante. %v:%v", line, column))
@@ -82,5 +82,22 @@ func (env *Env) PrintErrors() {
 		for _, Error := range env.Errors {
 			fmt.Println(Error)
 		}
+	}
+}
+
+func (env *Env) getType(Type utils.Type) string {
+	switch Type {
+	case utils.INT:
+		return "Int"
+	case utils.FLOAT:
+		return "Float"
+	case utils.STRING:
+		return "String"
+	case utils.BOOLEAN:
+		return "Bool"
+	case utils.CHAR:
+		return "Character"
+	default:
+		return "nil"
 	}
 }

@@ -28,6 +28,6 @@ func (as *AsignID) ColumnN() int {
 
 func (as *AsignID) Exec(env *env.Env) interface{} {
 	value := as.Value.Exec(env)
-	env.ReasignID(as.Id, value, as.Line, as.Column)
+	env.ReasignID(as.Id, value, as.Value.LineN(), as.Value.ColumnN())
 	return nil
 }

@@ -50,10 +50,11 @@ listparams :
     (TK_id | TK_under)? TK_id TK_colon RW_inout? type TK_comma listparams |
     (TK_id | TK_under)? TK_id TK_colon RW_inout? type                     ;
 
-ifstruct :
-    RW_if exp env RW_else ifstruct |
-    RW_if exp env RW_else env      |
-    RW_if exp env                  ;
+ifstruct returns[interfaces.Instruction result] :
+    //(interface{}(localctx.(*IfstructContext).GetB3().GetResult())).(*interfaces.Instruction)
+    r = RW_if cn = exp b1 = env RW_else b2 = ifstruct  {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, $b2.result)                                        } |
+    r = RW_if cn = exp b1 = env RW_else b3 = env       {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, (interface{}($b3.result)).(interfaces.Instruction))} |
+    r = RW_if cn = exp b1 = env                        {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, nil)                                               } ;
 
 switchstruct :
     RW_switch exp envs ;
@@ -180,9 +181,9 @@ print returns[interfaces.Instruction result]:
     p = RW_print TK_lpar exps = listexp TK_rpar {$result = instructions.NewPrint($p.line, $p.pos, $exps.result)} |
     p = RW_print TK_lpar TK_rpar                {$result = instructions.NewPrint($p.line, $p.pos, nil)         } ;
 
-env :
-    TK_lbrc instructions? TK_rbrc |
-    TK_lbrc TK_rbrc               ;
+env returns[interfaces.Instruction result] :
+    l = TK_lbrc ins = instructions TK_rbrc {$result = instructions.NewBlock($l.line, $l.pos, $ins.result)    } |
+    l = TK_lbrc TK_rbrc                    {$result = instructions.NewBlock($l.line, $l.pos, []interface{}{})} ;
 
 instructions returns[[]interface{} result] :
     l = instructions i = instruction {$result = $l.result;; $result = append($result, $i.result)} |
@@ -191,7 +192,7 @@ instructions returns[[]interface{} result] :
 instruction returns[interface{} result] :
     inst1 =  decvar                          TK_semicolon? {$result = $inst1.result} |
     inst2 =  deccst                          TK_semicolon? {$result = $inst2.result} |
-    ifstruct                                      |
+    inst3 =  ifstruct                                      {$result = $inst3.result}|
     switchstruct                                  |
     loopfor                                       |
     loopwhile                                     |

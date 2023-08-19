@@ -43,6 +43,7 @@ func (pr *Primitive) Exec(env *env.Env) *utils.ReturnType {
 	default:
 		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\n", "\n")
 		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\t", "\t")
+		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\r", "\r")
 		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\\"", "\"")
 		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\'", "'")
 		pr.Value = strings.ReplaceAll(fmt.Sprintf("%v", pr.Value), "\\\\", "\\")

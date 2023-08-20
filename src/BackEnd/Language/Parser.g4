@@ -89,8 +89,8 @@ loopfor returns[interfaces.Instruction result] :
 range returns[[]interfaces.Expression result] :
     e1 = exp TK_dot TK_dot TK_dot e2 = exp {$result = []interfaces.Expression{$e1.result, $e2.result}} ;
 
-loopwhile :
-    RW_while exp env ;
+loopwhile returns[interfaces.Instruction result] :
+    w = RW_while e = exp b = env {$result = instructions.NewWhile($w.line, $w.pos, $e.result, $b.result)} ;
 
 guard :
     RW_guard exp RW_else env ;
@@ -201,7 +201,7 @@ instruction returns[interface{} result] :
     inst3 =  ifstruct                                      {$result = $inst3.result} |
     inst4 =  switchstruct                                  {$result = $inst4.result} |
     inst5 =  loopfor                                       {$result = $inst5.result} |
-    loopwhile                                     |
+    inst6 =  loopwhile                                     {$result = $inst6.result} |
     guard                                         |
     (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result}|
     (RW_self TK_dot)? addsub        TK_semicolon? |

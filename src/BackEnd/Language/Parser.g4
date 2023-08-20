@@ -82,11 +82,12 @@ default returns[interfaces.Instruction result] :
     d = RW_default TK_colon b = instructions {$result = instructions.NewBlock($d.line, $d.pos, $b.result)      } |
     d = RW_default TK_colon                  {$result = instructions.NewBlock($d.line, $d.pos, []interface{}{})} ;
 
-loopfor :
-    RW_for TK_id RW_in (exp | range) env ;
+loopfor returns[interfaces.Instruction result] :
+    f = RW_for id = TK_id RW_in r = range b = env {$result = instructions.NewFor($f.line, $f.pos, $id.text, nil, $r.result[0], $r.result[1], $b.result)} |
+    f = RW_for id = TK_id RW_in e = exp b = env   {$result = instructions.NewFor($f.line, $f.pos, $id.text, $e.result, nil, nil, $b.result)            } ;
 
-range :
-    exp TK_dot TK_dot TK_dot exp ;
+range returns[[]interfaces.Expression result] :
+    e1 = exp TK_dot TK_dot TK_dot e2 = exp {$result = []interfaces.Expression{$e1.result, $e2.result}} ;
 
 loopwhile :
     RW_while exp env ;
@@ -199,7 +200,7 @@ instruction returns[interface{} result] :
     inst2 =  deccst                          TK_semicolon? {$result = $inst2.result} |
     inst3 =  ifstruct                                      {$result = $inst3.result} |
     inst4 =  switchstruct                                  {$result = $inst4.result} |
-    loopfor                                       |
+    inst5 =  loopfor                                       {$result = $inst5.result} |
     loopwhile                                     |
     guard                                         |
     (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result}|

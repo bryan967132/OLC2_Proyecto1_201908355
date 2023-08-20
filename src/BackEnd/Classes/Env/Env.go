@@ -32,28 +32,28 @@ func (env *Env) GetValueID(id string, line, column int) *Symbol {
 		}
 		current = current.previous
 	}
-	env.SetError(fmt.Sprintf("Acceso a variable inexistente. %v:%v", line, column))
+	current.SetError(fmt.Sprintf("Acceso a variable inexistente. %v:%v", line, column))
 	return nil
 }
 
 func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) bool {
 	var current *Env = env
 	for current != nil {
-		if _, exists := (*env.Ids)[id]; exists {
-			if (*env.Ids)[id].IsVariable {
-				if (*env.Ids)[id].Type == value.Type || (*env.Ids)[id].Type == utils.STRING && value.Type == utils.CHAR || (*env.Ids)[id].Type == utils.FLOAT && value.Type == utils.INT {
-					(*env.Ids)[id].Value = value
+		if _, exists := (*current.Ids)[id]; exists {
+			if (*current.Ids)[id].IsVariable {
+				if (*current.Ids)[id].Type == value.Type || (*current.Ids)[id].Type == utils.STRING && value.Type == utils.CHAR || (*current.Ids)[id].Type == utils.FLOAT && value.Type == utils.INT {
+					(*current.Ids)[id].Value = value
 					return true
 				}
-				env.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", env.getType(value.Type), env.getType((*env.Ids)[id].Type), line, column))
+				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", env.getType(value.Type), env.getType((*env.Ids)[id].Type), line, column))
 				return false
 			}
-			env.SetError(fmt.Sprintf("Asignación de valor a constante. %v:%v", line, column))
+			current.SetError(fmt.Sprintf("Asignación de valor a constante. %v:%v", line, column))
 			return false
 		}
 		current = current.previous
 	}
-	env.SetError(fmt.Sprintf("Asignación de valor a variable inexistente. %v:%v", line, column))
+	current.SetError(fmt.Sprintf("Asignación de valor a variable inexistente. %v:%v", line, column))
 	return false
 }
 

@@ -54,31 +54,33 @@ listparams :
     (TK_id | TK_under)? TK_id TK_colon RW_inout? type                     ;
 
 ifstruct returns[interfaces.Instruction result] :
-    //(interface{}(localctx.(*IfstructContext).GetB3().GetResult())).(*interfaces.Instruction)
     r = RW_if cn = exp b1 = env RW_else b2 = ifstruct  {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, $b2.result)                                        } |
     r = RW_if cn = exp b1 = env RW_else b3 = env       {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, (interface{}($b3.result)).(interfaces.Instruction))} |
     r = RW_if cn = exp b1 = env                        {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, nil)                                               } ;
 
-switchstruct :
-    RW_switch exp envs ;
+switchstruct returns[interfaces.Instruction result] :
+    s = RW_switch e = exp b = envs {$result = instructions.NewSwitch($s.line, $s.pos, $e.result, $b.result[0], $b.result[1].(interfaces.Instruction))} ;
 
-envs :
-    TK_lbrc casesdefault TK_rbrc ;
+envs returns[[]interface{} result] :
+    TK_lbrc cd = casesdefault TK_rbrc {$result = $cd.result             } |
+    TK_lbrc TK_rbrc                   {$result = []interface{}{nil, nil}} ;
 
-casesdefault :
-    cases default |
-    cases         |
-    default       ;
+casesdefault returns[[]interface{} result] :
+    c = cases d = default {$result = []interface{}{$c.result, $d.result}} |
+    c = cases             {$result = []interface{}{$c.result, nil}      } |
+    d = default           {$result = []interface{}{nil,       $d.result}} ;
 
-cases :
-    cases case |
-    case       ;
+cases returns[[]interfaces.Instruction result] :
+    l = cases c = case {$result = $l.result;; $result = append($result, $c.result)} |
+    c = case           {$result = []interfaces.Instruction{$c.result}             } ;
 
-case :
-    RW_case exp TK_colon instructions ;
+case returns[interfaces.Instruction result] :
+    c = RW_case e = exp TK_colon b = instructions {$result = instructions.NewCase($c.line, $c.pos, $e.result, instructions.NewBlock($c.line, $c.pos, $b.result))      } |
+    c = RW_case e = exp TK_colon                  {$result = instructions.NewCase($c.line, $c.pos, $e.result, instructions.NewBlock($c.line, $c.pos, []interface{}{}))} ;
 
-default :
-    RW_default TK_colon instructions ;
+default returns[interfaces.Instruction result] :
+    d = RW_default TK_colon b = instructions {$result = instructions.NewBlock($d.line, $d.pos, $b.result)      } |
+    d = RW_default TK_colon                  {$result = instructions.NewBlock($d.line, $d.pos, []interface{}{})} ;
 
 loopfor :
     RW_for TK_id RW_in (exp | range) env ;
@@ -195,8 +197,8 @@ instructions returns[[]interface{} result] :
 instruction returns[interface{} result] :
     inst1 =  decvar                          TK_semicolon? {$result = $inst1.result} |
     inst2 =  deccst                          TK_semicolon? {$result = $inst2.result} |
-    inst3 =  ifstruct                                      {$result = $inst3.result}|
-    switchstruct                                  |
+    inst3 =  ifstruct                                      {$result = $inst3.result} |
+    inst4 =  switchstruct                                  {$result = $inst4.result} |
     loopfor                                       |
     loopwhile                                     |
     guard                                         |

@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	filePath := "../../../Inputs/Input9.swift"
+	filePath := "../../../Inputs/Input10.swift"
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error al leer el archivo:", err)

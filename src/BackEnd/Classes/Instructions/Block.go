@@ -25,9 +25,9 @@ func (bk *Block) ColumnN() int {
 	return bk.Column
 }
 
-func (bk *Block) Exec(Env *env.Env) interface{} {
+func (bk *Block) Exec(Env *env.Env) *utils.ReturnType {
 	newEnv := env.NewEnv(Env, Env.Name)
-	var ret interface{}
+	var ret *utils.ReturnType
 	for _, instruction := range bk.Instructions {
 		ret = (instruction.(interfaces.Instruction)).Exec(newEnv)
 		if ret != nil {

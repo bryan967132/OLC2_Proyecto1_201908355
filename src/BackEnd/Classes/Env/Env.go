@@ -71,7 +71,18 @@ func (env *Env) PrintPrints() {
 }
 
 func (env *Env) SetError(errorD string) {
-	utils.Errors = append(utils.Errors, errorD)
+	if !env.match(errorD) {
+		utils.Errors = append(utils.Errors, errorD)
+	}
+}
+
+func (env *Env) match(err string) bool {
+	for _, s := range utils.Errors {
+		if s == err {
+			return true
+		}
+	}
+	return false
 }
 
 func (env *Env) PrintErrors() {

@@ -200,7 +200,9 @@ func (ar *Arithmetic) mod(env *env.Env) *utils.ReturnType {
 	if ar.Type != utils.NIL {
 		if ar.Type == utils.INT {
 			if value2.Value.(int) != 0 {
-				return &utils.ReturnType{Value: value1.Value.(int) / value2.Value.(int), Type: ar.Type}
+				intValue1, _ := strconv.Atoi(fmt.Sprintf("%v", value1.Value))
+				intValue2, _ := strconv.Atoi(fmt.Sprintf("%v", value2.Value))
+				return &utils.ReturnType{Value: intValue1 % intValue2, Type: ar.Type}
 			}
 			env.SetError(fmt.Sprintf("%s %v:%v", "División entre cero.", ar.Exp2.LineN(), ar.Exp2.ColumnN()))
 			return &utils.ReturnType{Value: "nil", Type: ar.Type}

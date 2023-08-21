@@ -52,11 +52,17 @@ func (ar *Arithmetic) Exec(env *env.Env) *utils.ReturnType {
 
 func (ar *Arithmetic) plus(env *env.Env) *utils.ReturnType {
 	value1 := ar.Exp1.Exec(env)
-	if value1.Type == utils.BOOLEAN || value1.Type == utils.CHAR {
+	if value1.Type == utils.BOOLEAN {
 		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones aritméticas.", ar.Exp1.LineN(), ar.Exp1.ColumnN()))
 		return &utils.ReturnType{Value: "nil", Type: ar.Type}
 	}
+	if value1.Type == utils.CHAR {
+		value1.Type = utils.STRING
+	}
 	value2 := ar.Exp2.Exec(env)
+	if value2.Type == utils.CHAR {
+		value2.Type = utils.STRING
+	}
 	if int(value1.Type) < len(utils.Plus) && int(value2.Type) < len(utils.Plus[0]) {
 		ar.Type = utils.Plus[value1.Type][value2.Type]
 	} else {

@@ -92,8 +92,8 @@ range returns[[]interfaces.Expression result] :
 loopwhile returns[interfaces.Instruction result] :
     w = RW_while e = exp b = env {$result = instructions.NewWhile($w.line, $w.pos, $e.result, $b.result)} ;
 
-guard :
-    RW_guard exp RW_else env ;
+guard returns[interfaces.Instruction result] :
+    g = RW_guard e = exp RW_else b = env {$result = instructions.NewGuard($g.line, $g.pos, $e.result, $b.result)} ;
 
 reasign returns[interfaces.Instruction result] :
     id = TK_id TK_equ e = exp {$result = instructions.NewAsignID($id.line, $id.pos, $id.text, $e.result)} ;
@@ -202,7 +202,7 @@ instruction returns[interface{} result] :
     inst4 =  switchstruct                                  {$result = $inst4.result} |
     inst5 =  loopfor                                       {$result = $inst5.result} |
     inst6 =  loopwhile                                     {$result = $inst6.result} |
-    guard                                         |
+    inst7 =  guard                                         {$result = $inst7.result} |
     (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result}|
     (RW_self TK_dot)? addsub        TK_semicolon? |
     decvector                       TK_semicolon? |

@@ -12173,6 +12173,19 @@ func (p *ParserParser) Instruction() (localctx IInstructionContext) {
 		} else if p.HasError() { // JIM
 			goto errorExit
 		}
+		localctx.(*InstructionContext).result = expressions.NewReturn((func() int {
+			if localctx.(*InstructionContext).GetInst18() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst18().GetLine()
+			}
+		}()), (func() int {
+			if localctx.(*InstructionContext).GetInst18() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst18().GetLine()
+			}
+		}()), localctx.(*InstructionContext).GetE().GetResult())
 
 	case 19:
 		p.EnterOuterAlt(localctx, 19)
@@ -12200,6 +12213,32 @@ func (p *ParserParser) Instruction() (localctx IInstructionContext) {
 		} else if p.HasError() { // JIM
 			goto errorExit
 		}
+		localctx.(*InstructionContext).result = expressions.NewReturn((func() int {
+			if localctx.(*InstructionContext).GetInst19() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst19().GetLine()
+			}
+		}()), (func() int {
+			if localctx.(*InstructionContext).GetInst19() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst19().GetLine()
+			}
+		}()), nil)
+		localctx.(*InstructionContext).result = expressions.NewReturn((func() int {
+			if localctx.(*InstructionContext).GetInst19() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst19().GetLine()
+			}
+		}()), (func() int {
+			if localctx.(*InstructionContext).GetInst19() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst19().GetLine()
+			}
+		}()), nil)
 
 	case 20:
 		p.EnterOuterAlt(localctx, 20)
@@ -12227,6 +12266,19 @@ func (p *ParserParser) Instruction() (localctx IInstructionContext) {
 		} else if p.HasError() { // JIM
 			goto errorExit
 		}
+		localctx.(*InstructionContext).result = instructions.NewContinue((func() int {
+			if localctx.(*InstructionContext).GetInst20() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst20().GetLine()
+			}
+		}()), (func() int {
+			if localctx.(*InstructionContext).GetInst20() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst20().GetLine()
+			}
+		}()))
 
 	case 21:
 		p.EnterOuterAlt(localctx, 21)
@@ -12267,6 +12319,19 @@ errorExit:
 		p.GetErrorHandler().Recover(p, v)
 		p.SetError(nil)
 	}
+		localctx.(*InstructionContext).result = instructions.NewBreak((func() int {
+			if localctx.(*InstructionContext).GetInst21() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst21().GetLine()
+			}
+		}()), (func() int {
+			if localctx.(*InstructionContext).GetInst21() == nil {
+				return 0
+			} else {
+				return localctx.(*InstructionContext).GetInst21().GetLine()
+			}
+		}()))
 	p.ExitRule()
 	return localctx
 	goto errorExit // Trick to prevent compiler error if the label is not used

@@ -213,10 +213,10 @@ instruction returns[interface{} result] :
     (RW_self TK_dot)? useattribs    TK_semicolon? |
     (RW_self TK_dot)? callfunc      TK_semicolon? |
     inst17 = print                           TK_semicolon? {$result = $inst17.result} |
-    RW_return exp                   TK_semicolon? |
-    RW_return                       TK_semicolon? |
-    RW_continue                     TK_semicolon? |
-    RW_break                        TK_semicolon? ;
+    inst18 = RW_return e = exp               TK_semicolon? {$result = expressions.NewReturn($inst18.line, $inst18.line, $e.result)}|
+    inst19 = RW_return                       TK_semicolon? {$result = expressions.NewReturn($inst19.line, $inst19.line, nil)      }|
+    inst20 = RW_continue                     TK_semicolon? {$result = instructions.NewContinue($inst20.line, $inst20.line)        }|
+    inst21 = RW_break                        TK_semicolon? {$result = instructions.NewBreak($inst21.line, $inst21.line)           };
 
 type returns[utils.AttribsType result] :
     t = RW_String    {$result = *utils.NewAttribsType($t.line, $t.pos, utils.STRING) } |

@@ -33,7 +33,7 @@ func (c *Case) SetCase(caseEvaluate *utils.ReturnType) {
 	c.CaseEvaluate = caseEvaluate
 }
 
-func (c *Case) Exec(Env *env.Env) interface{} {
+func (c *Case) Exec(Env *env.Env) *utils.ReturnType {
 	envCase := env.NewEnv(Env, Env.Name+" Case")
 	caseE := c.CaseEvaluate
 	case_ := c.Case.Exec(envCase)

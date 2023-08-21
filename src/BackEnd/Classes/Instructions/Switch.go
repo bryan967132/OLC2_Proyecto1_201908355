@@ -28,23 +28,23 @@ func (s *Switch) ColumnN() int {
 	return s.Column
 }
 
-func (s *Switch) Exec(Env *env.Env) interface{} {
+func (s *Switch) Exec(Env *env.Env) *utils.ReturnType {
 	envSwitch := env.NewEnv(Env, Env.Name+"Switch")
 	if s.Cases != nil {
 		arg := s.Arg.Exec(Env)
 		for _, case_ := range s.ToSlice(s.Cases) {
-			(case_.(interfaces.Instruction)).(*Case).SetCase(arg)
+			case_.(*Case).SetCase(arg)
 			case_exec := case_.(interfaces.Instruction).Exec(envSwitch)
 			if case_exec != nil {
-				if case_exec.(utils.ReturnType).Value == utils.RETURN {
+				if case_exec.Value == utils.RETURN {
 					return nil
 				}
-				if case_exec.(utils.ReturnType).Value == utils.BREAK {
+				if case_exec.Value == utils.BREAK {
 					return nil
 				}
 				return case_exec
 			}
-			if (case_.(interfaces.Instruction)).(*Case).Flag {
+			if case_.(*Case).Flag {
 				return nil
 			}
 		}
@@ -52,10 +52,10 @@ func (s *Switch) Exec(Env *env.Env) interface{} {
 	if s.Default != nil {
 		default_ := s.Default.Exec(envSwitch)
 		if default_ != nil {
-			if default_.(utils.ReturnType).Value == utils.RETURN {
+			if default_.Value == utils.RETURN {
 				return nil
 			}
-			if default_.(utils.ReturnType).Value == utils.BREAK {
+			if default_.Value == utils.BREAK {
 				return nil
 			}
 			return default_

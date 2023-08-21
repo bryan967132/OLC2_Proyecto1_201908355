@@ -45,7 +45,7 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 					(*current.Ids)[id].Value = value
 					return true
 				}
-				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", env.getType(value.Type), env.getType((*env.Ids)[id].Type), line, column))
+				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", current.getType(value.Type), current.getType((*current.Ids)[id].Type), line, column))
 				return false
 			}
 			current.SetError(fmt.Sprintf("Asignación de valor a constante. %v:%v", line, column))

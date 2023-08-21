@@ -28,7 +28,7 @@ func (i *If) ColumnN() int {
 	return i.Column
 }
 
-func (i *If) Exec(Env *env.Env) interface{} {
+func (i *If) Exec(Env *env.Env) *utils.ReturnType {
 	condition := i.Condition.Exec(Env)
 	if condition.Type == utils.BOOLEAN {
 		if fmt.Sprintf("%v", condition.Value) == "true" {

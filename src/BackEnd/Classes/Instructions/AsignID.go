@@ -26,7 +26,7 @@ func (as *AsignID) ColumnN() int {
 	return as.Column
 }
 
-func (as *AsignID) Exec(env *env.Env) interface{} {
+func (as *AsignID) Exec(env *env.Env) *utils.ReturnType {
 	value := as.Value.Exec(env)
 	env.ReasignID(as.Id, value, as.Value.LineN(), as.Value.ColumnN())
 	return nil

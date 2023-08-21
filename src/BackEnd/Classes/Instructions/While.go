@@ -27,17 +27,17 @@ func (w *While) ColumnN() int {
 	return w.Column
 }
 
-func (w *While) Exec(Env *env.Env) interface{} {
+func (w *While) Exec(Env *env.Env) *utils.ReturnType {
 	envWhile := env.NewEnv(Env, Env.Name+" While")
 	condition := w.Condition.Exec(Env)
 	for fmt.Sprintf("%v", condition.Value) == "true" {
 		block := w.Block.Exec(envWhile)
 		if block != nil {
-			if block.(utils.ReturnType).Value == utils.CONTINUE {
+			if block.Value == utils.CONTINUE {
 				condition = w.Condition.Exec(Env)
 				continue
 			}
-			if block.(utils.ReturnType).Value == utils.BREAK {
+			if block.Value == utils.BREAK {
 				break
 			}
 			return block

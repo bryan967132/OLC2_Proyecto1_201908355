@@ -30,24 +30,24 @@ func (i *If) ColumnN() int {
 
 func (i *If) Exec(Env *env.Env) interface{} {
 	condition := i.Condition.Exec(Env)
-	if condition.Type != utils.BOOLEAN {
-		Env.SetError(fmt.Sprintf("No se evalúa una expresión lógica o relacional como condicion. %v:%v", i.Line, i.Column))
-		return nil
-	}
-	if fmt.Sprintf("%v", condition.Value) == "true" {
-		var envIf *env.Env = env.NewEnv(Env, Env.Name+" If")
-		block := i.Block.Exec(envIf)
-		if block != nil {
-			return block
+	if condition.Type == utils.BOOLEAN {
+		if fmt.Sprintf("%v", condition.Value) == "true" {
+			var envIf *env.Env = env.NewEnv(Env, Env.Name+" If")
+			block := i.Block.Exec(envIf)
+			if block != nil {
+				return block
+			}
+			return nil
+		}
+		// else
+		if i.Except != nil {
+			except := i.Except.Exec(Env)
+			if except != nil {
+				return except
+			}
 		}
 		return nil
 	}
-	// else
-	if i.Except != nil {
-		except := i.Except.Exec(Env)
-		if except != nil {
-			return except
-		}
-	}
+	Env.SetError(fmt.Sprintf("No se evalúa una expresión lógica o relacional como condicion. %v:%v", i.Line, i.Column))
 	return nil
 }

@@ -12,11 +12,11 @@ type While struct {
 	Column    int
 	TypeInst  utils.TypeInst
 	Condition interfaces.Expression
-	Block     *interfaces.Instruction
+	Block     interfaces.Instruction
 }
 
 func NewWhile(line, column int, condition interfaces.Expression, block interfaces.Instruction) *While {
-	return &While{line, column, utils.LOOP_WHILE, condition, &block}
+	return &While{line, column, utils.LOOP_WHILE, condition, block}
 }
 
 func (w *While) LineN() int {
@@ -31,7 +31,7 @@ func (w *While) Exec(Env *env.Env) interface{} {
 	envWhile := env.NewEnv(Env, Env.Name+" While")
 	condition := w.Condition.Exec(Env)
 	for fmt.Sprintf("%v", condition.Value) == "true" {
-		block := (*w.Block).Exec(envWhile)
+		block := w.Block.Exec(envWhile)
 		if block != nil {
 			if block.(utils.ReturnType).Value == utils.CONTINUE {
 				condition = w.Condition.Exec(Env)

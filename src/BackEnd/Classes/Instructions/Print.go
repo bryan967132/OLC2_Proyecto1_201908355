@@ -26,11 +26,11 @@ func (prt *Print) ColumnN() int {
 	return prt.Column
 }
 
-func (prt *Print) Exec(env *env.Env) interface{} {
+func (prt *Print) Exec(env *env.Env) *utils.ReturnType {
 	value := ""
 	if prt.Exps != nil {
-		for i := 0; i < len(prt.Exps); i++ {
-			value1 := prt.Exps[i].Exec(env)
+		for _, exp := range prt.Exps {
+			value1 := exp.Exec(env)
 			if value != "" {
 				value = fmt.Sprintf("%s %v", value, value1.Value)
 			} else {

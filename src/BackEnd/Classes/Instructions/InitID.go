@@ -29,7 +29,7 @@ func (in *InitID) ColumnN() int {
 	return in.Column
 }
 
-func (in *InitID) Exec(env *env.Env) interface{} {
+func (in *InitID) Exec(env *env.Env) *utils.ReturnType {
 	if in.Value != nil {
 		value := in.Value.Exec(env)
 		if in.Type != utils.NIL {

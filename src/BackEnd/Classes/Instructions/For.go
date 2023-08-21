@@ -45,13 +45,10 @@ func (f *For) Exec(Env *env.Env) *utils.ReturnType {
 		}
 		envFor.SaveID(false, f.IDIter, limInf, utils.INT, f.Line, f.Column)
 		for i := limInf.Value.(int); i <= limSup.Value.(int); i++ {
-			fmt.Println(i)
 			(*(envFor.Ids))[f.IDIter].Value.(*utils.ReturnType).Value = i
 			block := f.Block.Exec(envFor)
-			fmt.Println(block)
 			if block != nil {
 				if block.Value.(utils.TypeInst) == utils.CONTINUE {
-					fmt.Println("CONTINUE")
 					continue
 				}
 				if block.Value.(utils.TypeInst) == utils.BREAK {

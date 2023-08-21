@@ -30,7 +30,7 @@ func (f *For) ColumnN() int {
 	return f.Column
 }
 
-func (f *For) Exec(Env *env.Env) interface{} {
+func (f *For) Exec(Env *env.Env) *utils.ReturnType {
 	envFor := env.NewEnv(Env, Env.Name+" For")
 	if f.Exp == nil {
 		limInf := f.LimInf.Exec(Env)
@@ -45,13 +45,16 @@ func (f *For) Exec(Env *env.Env) interface{} {
 		}
 		envFor.SaveID(false, f.IDIter, limInf, utils.INT, f.Line, f.Column)
 		for i := limInf.Value.(int); i <= limSup.Value.(int); i++ {
+			fmt.Println(i)
 			(*(envFor.Ids))[f.IDIter].Value.(*utils.ReturnType).Value = i
 			block := f.Block.Exec(envFor)
+			fmt.Println(block)
 			if block != nil {
-				if block.(utils.ReturnType).Value == utils.CONTINUE {
+				if block.Value.(utils.TypeInst) == utils.CONTINUE {
+					fmt.Println("CONTINUE")
 					continue
 				}
-				if block.(utils.ReturnType).Value == utils.BREAK {
+				if block.Value.(utils.TypeInst) == utils.BREAK {
 					break
 				}
 				return block
@@ -66,10 +69,10 @@ func (f *For) Exec(Env *env.Env) interface{} {
 			(*(envFor.Ids))[f.IDIter].Value.(*utils.ReturnType).Value = fmt.Sprintf("%c", rune(char))
 			block := f.Block.Exec(envFor)
 			if block != nil {
-				if block.(utils.ReturnType).Value == utils.CONTINUE {
+				if block.Value == utils.CONTINUE {
 					continue
 				}
-				if block.(utils.ReturnType).Value == utils.BREAK {
+				if block.Value == utils.BREAK {
 					break
 				}
 				return block

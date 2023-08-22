@@ -98,8 +98,8 @@ guard returns[interfaces.Instruction result] :
 reasign returns[interfaces.Instruction result] :
     id = TK_id TK_equ e = exp {$result = instructions.NewAsignID($id.line, $id.pos, $id.text, $e.result)} ;
 
-addsub :
-    TK_id (TK_add | TK_sub) exp ;
+addsub returns[interfaces.Instruction result] :
+    id = TK_id s = (TK_add | TK_sub) e = exp {$result = instructions.NewAddSub($id.line, $id.pos, $id.text, $s.text, $e.result)} ;
 
 decvector :
     RW_var TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector ;
@@ -203,8 +203,8 @@ instruction returns[interface{} result] :
     inst5 =  loopfor                                       {$result = $inst5.result} |
     inst6 =  loopwhile                                     {$result = $inst6.result} |
     inst7 =  guard                                         {$result = $inst7.result} |
-    (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result}|
-    (RW_self TK_dot)? addsub        TK_semicolon? |
+    (RW_self TK_dot)? inst8 = reasign        TK_semicolon? {$result = $inst8.result} |
+    (RW_self TK_dot)? inst9 = addsub         TK_semicolon? {$result = $inst9.result} |
     decvector                       TK_semicolon? |
     funcvector                      TK_semicolon? |
     (RW_self TK_dot)? reasignvector TK_semicolon? |

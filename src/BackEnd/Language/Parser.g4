@@ -102,19 +102,17 @@ addsub returns[interfaces.Instruction result] :
     id = TK_id s = (TK_add | TK_sub) e = exp {$result = instructions.NewAddSub($id.line, $id.pos, $id.text, $s.text, $e.result)} ;
 
 decvector :
-    RW_var TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector ;
+    RW_var TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector |
+    RW_let TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector ;
 
 defvector :
-    TK_lbrk listexp? TK_rbrk |
-    simplevec                |
-    TK_id                    ;
+    TK_lbrk listexp TK_rbrk |
+    TK_lbrk TK_rbrk         |
+    TK_id                   ;
 
 listexp returns[[]interfaces.Expression result] :
     l = listexp TK_comma e = exp {$result = $l.result;; $result = append($result, $e.result)} |
     e = exp                      {$result = []interfaces.Expression{$e.result}              } ;
-
-simplevec :
-    TK_lbrk type TK_rbrk TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar ;
 
 funcvector :
     TK_id TK_dot RW_append TK_lpar exp TK_rpar                |

@@ -17,7 +17,7 @@ func NewEnv(previous *Env, name string) *Env {
 
 func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
-		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, Value: value, Id: id, Type: Type}
+		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: Type}
 		return true
 	}
 	env.SetError(fmt.Sprintf("Declaración de variable existente. %v:%v", line, column))

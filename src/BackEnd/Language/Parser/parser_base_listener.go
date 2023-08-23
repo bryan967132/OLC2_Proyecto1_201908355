@@ -159,6 +159,12 @@ func (s *BaseParserListener) EnterDecvector(ctx *DecvectorContext) {}
 // ExitDecvector is called when production decvector is exited.
 func (s *BaseParserListener) ExitDecvector(ctx *DecvectorContext) {}
 
+// EnterTypeVec is called when production typeVec is entered.
+func (s *BaseParserListener) EnterTypeVec(ctx *TypeVecContext) {}
+
+// ExitTypeVec is called when production typeVec is exited.
+func (s *BaseParserListener) ExitTypeVec(ctx *TypeVecContext) {}
+
 // EnterDefvector is called when production defvector is entered.
 func (s *BaseParserListener) EnterDefvector(ctx *DefvectorContext) {}
 
@@ -170,12 +176,6 @@ func (s *BaseParserListener) EnterListexp(ctx *ListexpContext) {}
 
 // ExitListexp is called when production listexp is exited.
 func (s *BaseParserListener) ExitListexp(ctx *ListexpContext) {}
-
-// EnterSimplevec is called when production simplevec is entered.
-func (s *BaseParserListener) EnterSimplevec(ctx *SimplevecContext) {}
-
-// ExitSimplevec is called when production simplevec is exited.
-func (s *BaseParserListener) ExitSimplevec(ctx *SimplevecContext) {}
 
 // EnterFuncvector is called when production funcvector is entered.
 func (s *BaseParserListener) EnterFuncvector(ctx *FuncvectorContext) {}

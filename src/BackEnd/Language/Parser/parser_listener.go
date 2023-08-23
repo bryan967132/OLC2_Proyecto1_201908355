@@ -77,14 +77,14 @@ type ParserListener interface {
 	// EnterDecvector is called when entering the decvector production.
 	EnterDecvector(c *DecvectorContext)
 
+	// EnterTypeVec is called when entering the typeVec production.
+	EnterTypeVec(c *TypeVecContext)
+
 	// EnterDefvector is called when entering the defvector production.
 	EnterDefvector(c *DefvectorContext)
 
 	// EnterListexp is called when entering the listexp production.
 	EnterListexp(c *ListexpContext)
-
-	// EnterSimplevec is called when entering the simplevec production.
-	EnterSimplevec(c *SimplevecContext)
 
 	// EnterFuncvector is called when entering the funcvector production.
 	EnterFuncvector(c *FuncvectorContext)
@@ -224,14 +224,14 @@ type ParserListener interface {
 	// ExitDecvector is called when exiting the decvector production.
 	ExitDecvector(c *DecvectorContext)
 
+	// ExitTypeVec is called when exiting the typeVec production.
+	ExitTypeVec(c *TypeVecContext)
+
 	// ExitDefvector is called when exiting the defvector production.
 	ExitDefvector(c *DefvectorContext)
 
 	// ExitListexp is called when exiting the listexp production.
 	ExitListexp(c *ListexpContext)
-
-	// ExitSimplevec is called when exiting the simplevec production.
-	ExitSimplevec(c *SimplevecContext)
 
 	// ExitFuncvector is called when exiting the funcvector production.
 	ExitFuncvector(c *FuncvectorContext)

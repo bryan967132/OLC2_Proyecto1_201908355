@@ -44,14 +44,14 @@ deccst returns[interfaces.Instruction result] :
     d = RW_let id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, utils.NIL, $e.result)                   } ;
 
 declfunc :
-    RW_func TK_id TK_lpar listparams TK_rpar TK_prompt type env |
+    RW_func TK_id TK_lpar listparams TK_rpar TK_prompt typeComp env |
     RW_func TK_id TK_lpar listparams TK_rpar env                |
-    RW_func TK_id TK_lpar TK_rpar TK_prompt type env            |
+    RW_func TK_id TK_lpar TK_rpar TK_prompt typeComp env            |
     RW_func TK_id TK_lpar TK_rpar env                           ;
 
 listparams :
-    (TK_id | TK_under)? TK_id TK_colon RW_inout? type TK_comma listparams |
-    (TK_id | TK_under)? TK_id TK_colon RW_inout? type                     ;
+    (TK_id | TK_under)? TK_id TK_colon RW_inout? typeComp TK_comma listparams |
+    (TK_id | TK_under)? TK_id TK_colon RW_inout? typeComp                     ;
 
 ifstruct returns[interfaces.Instruction result] :
     r = RW_if cn = exp b1 = env RW_else b2 = ifstruct  {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, $b2.result)                                        } |
@@ -102,8 +102,8 @@ addsub returns[interfaces.Instruction result] :
     id = TK_id s = (TK_add | TK_sub) e = exp {$result = instructions.NewAddSub($id.line, $id.pos, $id.text, $s.text, $e.result)} ;
 
 decvector :
-    RW_var TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector |
-    RW_let TK_id TK_colon TK_lbrk type TK_rbrk TK_equ defvector ;
+    RW_var TK_id TK_colon TK_lbrk typeComp TK_rbrk TK_equ defvector |
+    RW_let TK_id TK_colon TK_lbrk typeComp TK_rbrk TK_equ defvector ;
 
 defvector :
     TK_lbrk listexp TK_rbrk |
@@ -158,7 +158,7 @@ listattribs :
     attrib TK_semicolon?             ;
 
 attrib :
-    (RW_let | RW_var) TK_id (TK_colon type)? (TK_equ exp)? |
+    (RW_let | RW_var) TK_id (TK_colon typeComp)? (TK_equ exp)? |
     RW_mutating? declfunc ;
 
 decstruct :
@@ -217,12 +217,15 @@ instruction returns[interface{} result] :
     inst21 = RW_break                        TK_semicolon? {$result = instructions.NewBreak($inst21.line, $inst21.line)           };
 
 type returns[utils.AttribsType result] :
-    t = RW_String    {$result = *utils.NewAttribsType($t.line, $t.pos, utils.STRING) } |
-    t = RW_Int       {$result = *utils.NewAttribsType($t.line, $t.pos, utils.INT)    } |
-    t = RW_Bool      {$result = *utils.NewAttribsType($t.line, $t.pos, utils.BOOLEAN)} |
-    t = RW_Character {$result = *utils.NewAttribsType($t.line, $t.pos, utils.CHAR)   } |
-    t = RW_Float     {$result = *utils.NewAttribsType($t.line, $t.pos, utils.FLOAT)  } |
-    t = TK_id        {$result = *utils.NewAttribsType($t.line, $t.pos, $t.text)      } ;
+    t = RW_String    {$result = *utils.NewAttribsType($t.line, $t.pos, utils.STRING, true) } |
+    t = RW_Int       {$result = *utils.NewAttribsType($t.line, $t.pos, utils.INT, true)    } |
+    t = RW_Bool      {$result = *utils.NewAttribsType($t.line, $t.pos, utils.BOOLEAN, true)} |
+    t = RW_Character {$result = *utils.NewAttribsType($t.line, $t.pos, utils.CHAR, true)   } |
+    t = RW_Float     {$result = *utils.NewAttribsType($t.line, $t.pos, utils.FLOAT, true)  } ;
+
+typeComp returns[utils.AttribsType result] :
+    t = type  {$result = $t.result} |
+    i = TK_id {$result = *utils.NewAttribsType($i.line, $i.pos, $t.text, false)} ;
 
 exp returns[interfaces.Expression result] :
     // ARITHMETICS

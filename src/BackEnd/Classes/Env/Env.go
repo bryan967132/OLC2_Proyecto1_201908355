@@ -24,6 +24,15 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 	return false
 }
 
+func (env *Env) SaveArray(isVariable bool, id string, value interface{}, Type utils.Type, line, column int) bool {
+	if _, exists := (*env.Ids)[id]; !exists {
+		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
+		return true
+	}
+	env.SetError(fmt.Sprintf("Declaración de variable existente. %v:%v", line, column))
+	return false
+}
+
 func (env *Env) GetValueID(id string, line, column int) *Symbol {
 	var current *Env = env
 	for current != nil {

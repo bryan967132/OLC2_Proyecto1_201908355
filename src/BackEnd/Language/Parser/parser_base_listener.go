@@ -1,4 +1,4 @@
-// Code generated from Parser.g4 by ANTLR 4.13.0. DO NOT EDIT.
+// Code generated from Parser.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
 package parser // Parser
 
@@ -159,12 +159,6 @@ func (s *BaseParserListener) EnterDecvector(ctx *DecvectorContext) {}
 // ExitDecvector is called when production decvector is exited.
 func (s *BaseParserListener) ExitDecvector(ctx *DecvectorContext) {}
 
-// EnterTypeVec is called when production typeVec is entered.
-func (s *BaseParserListener) EnterTypeVec(ctx *TypeVecContext) {}
-
-// ExitTypeVec is called when production typeVec is exited.
-func (s *BaseParserListener) ExitTypeVec(ctx *TypeVecContext) {}
-
 // EnterDefvector is called when production defvector is entered.
 func (s *BaseParserListener) EnterDefvector(ctx *DefvectorContext) {}
 
@@ -308,6 +302,12 @@ func (s *BaseParserListener) EnterType(ctx *TypeContext) {}
 
 // ExitType is called when production type is exited.
 func (s *BaseParserListener) ExitType(ctx *TypeContext) {}
+
+// EnterTypeComp is called when production typeComp is entered.
+func (s *BaseParserListener) EnterTypeComp(ctx *TypeCompContext) {}
+
+// ExitTypeComp is called when production typeComp is exited.
+func (s *BaseParserListener) ExitTypeComp(ctx *TypeCompContext) {}
 
 // EnterExp is called when production exp is entered.
 func (s *BaseParserListener) EnterExp(ctx *ExpContext) {}

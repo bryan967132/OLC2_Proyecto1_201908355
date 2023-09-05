@@ -14,4 +14,5 @@ const (
 	CALL_FUNC     TypeExp = "CALL_FUNC"
 	RETURN        TypeExp = "RETURN"
 	CAST          TypeExp = "CAST"
+	ACCESS_ARRAY  TypeExp = "ACCESS_ARRAY"
 )

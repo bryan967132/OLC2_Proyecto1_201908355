@@ -1,4 +1,4 @@
-// Code generated from Parser.g4 by ANTLR 4.13.0. DO NOT EDIT.
+// Code generated from Parser.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
 package parser // Parser
 
@@ -77,9 +77,6 @@ type ParserListener interface {
 	// EnterDecvector is called when entering the decvector production.
 	EnterDecvector(c *DecvectorContext)
 
-	// EnterTypeVec is called when entering the typeVec production.
-	EnterTypeVec(c *TypeVecContext)
-
 	// EnterDefvector is called when entering the defvector production.
 	EnterDefvector(c *DefvectorContext)
 
@@ -151,6 +148,9 @@ type ParserListener interface {
 
 	// EnterType is called when entering the type production.
 	EnterType(c *TypeContext)
+
+	// EnterTypeComp is called when entering the typeComp production.
+	EnterTypeComp(c *TypeCompContext)
 
 	// EnterExp is called when entering the exp production.
 	EnterExp(c *ExpContext)
@@ -224,9 +224,6 @@ type ParserListener interface {
 	// ExitDecvector is called when exiting the decvector production.
 	ExitDecvector(c *DecvectorContext)
 
-	// ExitTypeVec is called when exiting the typeVec production.
-	ExitTypeVec(c *TypeVecContext)
-
 	// ExitDefvector is called when exiting the defvector production.
 	ExitDefvector(c *DefvectorContext)
 
@@ -298,6 +295,9 @@ type ParserListener interface {
 
 	// ExitType is called when exiting the type production.
 	ExitType(c *TypeContext)
+
+	// ExitTypeComp is called when exiting the typeComp production.
+	ExitTypeComp(c *TypeCompContext)
 
 	// ExitExp is called when exiting the exp production.
 	ExitExp(c *ExpContext)

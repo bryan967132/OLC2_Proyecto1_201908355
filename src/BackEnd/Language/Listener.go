@@ -1,6 +1,8 @@
 package language
 
-import parser "TSwift/Language/Parser"
+import (
+	parser "TSwift/Language/Parser"
+)
 
 type TSwfitListener struct {
 	*parser.BaseParserListener

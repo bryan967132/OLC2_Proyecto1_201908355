@@ -114,3 +114,23 @@ func (v *Vector) SetValuePosition(env *env.Env, indexs []int, newValue interface
 	env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
 	return false
 }
+
+func (v *Vector) GetCopy() *Vector {
+	vector := &Vector{}
+	vector.IsMatrix = v.IsMatrix
+	vector.IsReuseID = false
+	vector.Length = v.Length
+	vector.Dims = v.Dims
+	vector.Type = v.Type
+	vector.ID = v.ID
+	for _, v := range v.Vectors {
+		vector.Vectors = append(vector.Vectors, v)
+	}
+	for _, v := range v.Elements {
+		vector.Elements = append(vector.Elements, v)
+	}
+	for _, v := range v.Values {
+		vector.Values = append(vector.Values, v)
+	}
+	return vector
+}

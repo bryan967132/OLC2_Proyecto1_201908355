@@ -60,7 +60,7 @@ func (in *InitVector) Exec(env *env.Env) *utils.ReturnType {
 					return nil
 				}
 				reuseVector := *valuesID.Value.(*vector.Vector)
-				values = &reuseVector
+				values = (&reuseVector).GetCopy()
 			}
 			env.SaveArray(in.IsVariable, in.Id, values, in.Type.Value.(utils.Type), in.Line, in.Column)
 			return nil

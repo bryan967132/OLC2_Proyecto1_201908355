@@ -9,13 +9,14 @@ import (
 )
 
 type Count struct {
-	Line   int
-	Column int
-	Exp    interfaces.Expression
+	Line    int
+	Column  int
+	TypeExp utils.TypeExp
+	Exp     interfaces.Expression
 }
 
 func NewCount(line, column int, exp interfaces.Expression) *Count {
-	return &Count{line, column, exp}
+	return &Count{line, column, utils.ARRAY_COUNT, exp}
 }
 
 func (c *Count) LineN() int {

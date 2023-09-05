@@ -9,14 +9,15 @@ import (
 )
 
 type Append struct {
-	Line   int
-	Column int
-	ID     string
-	Exp    interfaces.Expression
+	Line     int
+	Column   int
+	TypeInst utils.TypeInst
+	ID       string
+	Exp      interfaces.Expression
 }
 
 func NewAppend(line, column int, id string, exp interfaces.Expression) *Append {
-	return &Append{line, column, id, exp}
+	return &Append{line, column, utils.ARRAY_APPEND, id, exp}
 }
 
 func (a *Append) LineN() int {

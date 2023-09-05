@@ -9,14 +9,15 @@ import (
 )
 
 type Remove struct {
-	Line   int
-	Column int
-	ID     string
-	Exp    interfaces.Expression
+	Line     int
+	Column   int
+	TypeInst utils.TypeInst
+	ID       string
+	Exp      interfaces.Expression
 }
 
 func NewRemove(line, column int, id string, exp interfaces.Expression) *Remove {
-	return &Remove{line, column, id, exp}
+	return &Remove{line, column, utils.ARRAY_REMOVE, id, exp}
 }
 
 func (r *Remove) LineN() int {

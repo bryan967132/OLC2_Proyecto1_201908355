@@ -15,4 +15,6 @@ const (
 	RETURN        TypeExp = "RETURN"
 	CAST          TypeExp = "CAST"
 	ACCESS_ARRAY  TypeExp = "ACCESS_ARRAY"
+	ARRAY_COUNT   TypeExp = "ACCESS_COUNT"
+	ARRAY_ISEMPTY TypeExp = "ACCESS_ISEMPTY"
 )

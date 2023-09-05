@@ -8,13 +8,14 @@ import (
 )
 
 type RemoveLast struct {
-	Line   int
-	Column int
-	ID     string
+	Line     int
+	Column   int
+	TypeInst utils.TypeInst
+	ID       string
 }
 
 func NewRemoveLast(line, column int, id string) *RemoveLast {
-	return &RemoveLast{line, column, id}
+	return &RemoveLast{line, column, utils.ARRAY_REMOVELAST, id}
 }
 
 func (r *RemoveLast) LineN() int {

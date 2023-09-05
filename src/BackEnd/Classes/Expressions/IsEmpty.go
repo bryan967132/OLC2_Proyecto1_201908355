@@ -9,13 +9,14 @@ import (
 )
 
 type IsEmpty struct {
-	Line   int
-	Column int
-	Exp    interfaces.Expression
+	Line    int
+	Column  int
+	TypeExp utils.TypeExp
+	Exp     interfaces.Expression
 }
 
 func NewIsEmpty(line, column int, exp interfaces.Expression) *IsEmpty {
-	return &IsEmpty{line, column, exp}
+	return &IsEmpty{line, column, utils.ARRAY_ISEMPTY, exp}
 }
 
 func (i *IsEmpty) LineN() int {

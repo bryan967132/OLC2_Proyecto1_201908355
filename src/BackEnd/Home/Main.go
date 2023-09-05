@@ -64,7 +64,10 @@ func Replaces(msg string) string {
 }
 
 func TreeDot(tree antlr.Tree, ruleNames []string) string {
-	dot := "digraph Tree {\n\tedge[dir=none];"
+	dot := "digraph Tree {"
+	dot += "\n\tgraph[fontname=\"Arial\" labelloc=\"t\" bgcolor=\"#252526\"];"
+	dot += "\n\tnode[fontname=\"Arial\" fontsize=\"8\" width=\"0\" height=\"0\" color=\"white\" fontcolor=\"white\"];"
+	dot += "\n\tedge[fontname=\"Arial\" color=\"white\" dir=none];"
 	dot += NodesTree("i", tree, ruleNames)
 	dot += "\n}"
 	return dot

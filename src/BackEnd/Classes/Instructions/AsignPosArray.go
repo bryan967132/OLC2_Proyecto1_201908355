@@ -1,4 +1,4 @@
-package expressions
+package instructions
 
 import (
 	env "TSwift/Classes/Env"
@@ -8,27 +8,28 @@ import (
 	"fmt"
 )
 
-type AccessArray struct {
-	Line    int
-	Column  int
-	TypeExp utils.TypeExp
-	Id      string
-	Index   []interfaces.Expression
+type AsignPosArray struct {
+	Line     int
+	Column   int
+	TypeInst utils.TypeInst
+	Id       string
+	Index    []interfaces.Expression
+	NewValue interfaces.Expression
 }
 
-func NewAccessArray(line, column int, id string, index []interfaces.Expression) *AccessArray {
-	return &AccessArray{line, column, utils.ACCESS_ARRAY, id, index}
+func NewAsignPosArray(line, column int, id string, index []interfaces.Expression, newValue interfaces.Expression) *AsignPosArray {
+	return &AsignPosArray{line, column, utils.ASIGN_ARRAY, id, index, newValue}
 }
 
-func (ac *AccessArray) LineN() int {
+func (ac *AsignPosArray) LineN() int {
 	return ac.Line
 }
 
-func (ac *AccessArray) ColumnN() int {
+func (ac *AsignPosArray) ColumnN() int {
 	return ac.Column
 }
 
-func (ac *AccessArray) Exec(env *env.Env) *utils.ReturnType {
+func (ac *AsignPosArray) Exec(env *env.Env) *utils.ReturnType {
 	value := env.GetValueID(ac.Id, ac.Line, ac.Column)
 	if value != nil {
 		if value.Type == utils.VECTOR {
@@ -44,21 +45,13 @@ func (ac *AccessArray) Exec(env *env.Env) *utils.ReturnType {
 					}
 					indexs = append(indexs, in.Value.(int))
 				}
-				value := vec.GetPosition(env, indexs, ac.Line, ac.Column)
-				if value == nil {
-					return &utils.ReturnType{Value: "nil", Type: utils.NIL}
-				}
-				switch value.(type) {
-				case *vector.Vector:
-					return &utils.ReturnType{Value: value.(*vector.Vector), Type: utils.VECTOR}
-				case *utils.ReturnType:
-					return value.(*utils.ReturnType)
-				}
+				vec.SetValuePosition(env, indexs, ac.NewValue, ac.Line, ac.Column)
+				return nil
 			}
 			env.SetError(fmt.Sprintf("Las dimensiones no coinciden con las del vector. %v:%v", ac.Line, ac.Column))
-			return &utils.ReturnType{Value: "nil", Type: utils.NIL}
+			return nil
 		}
 		env.SetError(fmt.Sprintf("La variable llamada no es un vector. %v:%v", ac.Line, ac.Column))
 	}
-	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
+	return nil
 }

@@ -146,8 +146,8 @@ simplematrix :
     typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon exp TK_rpar |
     typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar          ;
 
-reasignvector :
-    TK_id dims TK_equ exp ;
+reasignvector returns[interfaces.Instruction result] :
+    id = TK_id index = dims TK_equ e = exp {$result = instructions.NewAsignPosArray($id.line, $id.pos, $id.text, $index.result, $e.result)} ;
 
 dims returns[[]interfaces.Expression result] :
     l = dims TK_lbrk e = exp TK_rbrk {$result = $l.result;; $result = append($result, $e.result)} |
@@ -208,7 +208,7 @@ instruction returns[interface{} result] :
     (RW_self TK_dot)? inst9 = addsub         TK_semicolon? {$result = $inst9.result} |
     inst10 = decvector                       TK_semicolon? {$result = $inst10.result} |
     inst11 = funcvector                      TK_semicolon? {$result = $inst11.result} |
-    (RW_self TK_dot)? reasignvector TK_semicolon? |
+    (RW_self TK_dot)? inst12 = reasignvector TK_semicolon? {$result = $inst12.result} |
     decmatrix                       TK_semicolon? |
     decstruct                       TK_semicolon? |
     (RW_self TK_dot)? useattribs    TK_semicolon? |

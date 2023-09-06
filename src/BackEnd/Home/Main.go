@@ -5,8 +5,10 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	listener "TSwift/Language"
 	parser "TSwift/Language/Parser"
+	"bufio"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -34,6 +36,12 @@ func main() {
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 
 	//fmt.Println(TreeDot(tree, parser.RuleNames))
+	archivo, _ := os.Create("../../../Inputs/Tree.dot")
+	defer archivo.Close() // Cierra el archivo al final de la función
+
+	// Escribe en el archivo
+	escritor := bufio.NewWriter(archivo)
+	_, _ = escritor.WriteString(TreeDot(tree, parser.RuleNames))
 
 	global := env.NewEnv(nil, "Global")
 	for _, fail := range parserErrors.Errors {
@@ -42,13 +50,13 @@ func main() {
 
 	execute := listener.Code
 	for _, instruction := range execute {
-		defer func() {
+		/*defer func() {
 			if r := recover(); r != nil {
 				global.SetError(fmt.Sprintf("%v", r))
 				global.PrintPrints()
 				global.PrintErrors()
 			}
-		}()
+		}()*/
 		instruction.(interfaces.Instruction).Exec(global)
 	}
 	global.PrintPrints()

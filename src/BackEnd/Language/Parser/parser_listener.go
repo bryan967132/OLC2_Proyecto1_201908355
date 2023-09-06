@@ -89,20 +89,23 @@ type ParserListener interface {
 	// EnterDecmatrix is called when entering the decmatrix production.
 	EnterDecmatrix(c *DecmatrixContext)
 
-	// EnterTypematrix is called when entering the typematrix production.
-	EnterTypematrix(c *TypematrixContext)
-
 	// EnterDefmatrix is called when entering the defmatrix production.
 	EnterDefmatrix(c *DefmatrixContext)
 
-	// EnterListvector is called when entering the listvector production.
-	EnterListvector(c *ListvectorContext)
+	// EnterMatrix is called when entering the matrix production.
+	EnterMatrix(c *MatrixContext)
 
-	// EnterListvector2 is called when entering the listvector2 production.
-	EnterListvector2(c *Listvector2Context)
+	// EnterVectors is called when entering the vectors production.
+	EnterVectors(c *VectorsContext)
+
+	// EnterVector is called when entering the vector production.
+	EnterVector(c *VectorContext)
 
 	// EnterSimplematrix is called when entering the simplematrix production.
 	EnterSimplematrix(c *SimplematrixContext)
+
+	// EnterTypematrix is called when entering the typematrix production.
+	EnterTypematrix(c *TypematrixContext)
 
 	// EnterReasignvector is called when entering the reasignvector production.
 	EnterReasignvector(c *ReasignvectorContext)
@@ -236,20 +239,23 @@ type ParserListener interface {
 	// ExitDecmatrix is called when exiting the decmatrix production.
 	ExitDecmatrix(c *DecmatrixContext)
 
-	// ExitTypematrix is called when exiting the typematrix production.
-	ExitTypematrix(c *TypematrixContext)
-
 	// ExitDefmatrix is called when exiting the defmatrix production.
 	ExitDefmatrix(c *DefmatrixContext)
 
-	// ExitListvector is called when exiting the listvector production.
-	ExitListvector(c *ListvectorContext)
+	// ExitMatrix is called when exiting the matrix production.
+	ExitMatrix(c *MatrixContext)
 
-	// ExitListvector2 is called when exiting the listvector2 production.
-	ExitListvector2(c *Listvector2Context)
+	// ExitVectors is called when exiting the vectors production.
+	ExitVectors(c *VectorsContext)
+
+	// ExitVector is called when exiting the vector production.
+	ExitVector(c *VectorContext)
 
 	// ExitSimplematrix is called when exiting the simplematrix production.
 	ExitSimplematrix(c *SimplematrixContext)
+
+	// ExitTypematrix is called when exiting the typematrix production.
+	ExitTypematrix(c *TypematrixContext)
 
 	// ExitReasignvector is called when exiting the reasignvector production.
 	ExitReasignvector(c *ReasignvectorContext)

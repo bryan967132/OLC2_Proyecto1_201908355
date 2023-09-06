@@ -183,35 +183,41 @@ func (s *BaseParserListener) EnterDecmatrix(ctx *DecmatrixContext) {}
 // ExitDecmatrix is called when production decmatrix is exited.
 func (s *BaseParserListener) ExitDecmatrix(ctx *DecmatrixContext) {}
 
-// EnterTypematrix is called when production typematrix is entered.
-func (s *BaseParserListener) EnterTypematrix(ctx *TypematrixContext) {}
-
-// ExitTypematrix is called when production typematrix is exited.
-func (s *BaseParserListener) ExitTypematrix(ctx *TypematrixContext) {}
-
 // EnterDefmatrix is called when production defmatrix is entered.
 func (s *BaseParserListener) EnterDefmatrix(ctx *DefmatrixContext) {}
 
 // ExitDefmatrix is called when production defmatrix is exited.
 func (s *BaseParserListener) ExitDefmatrix(ctx *DefmatrixContext) {}
 
-// EnterListvector is called when production listvector is entered.
-func (s *BaseParserListener) EnterListvector(ctx *ListvectorContext) {}
+// EnterMatrix is called when production matrix is entered.
+func (s *BaseParserListener) EnterMatrix(ctx *MatrixContext) {}
 
-// ExitListvector is called when production listvector is exited.
-func (s *BaseParserListener) ExitListvector(ctx *ListvectorContext) {}
+// ExitMatrix is called when production matrix is exited.
+func (s *BaseParserListener) ExitMatrix(ctx *MatrixContext) {}
 
-// EnterListvector2 is called when production listvector2 is entered.
-func (s *BaseParserListener) EnterListvector2(ctx *Listvector2Context) {}
+// EnterVectors is called when production vectors is entered.
+func (s *BaseParserListener) EnterVectors(ctx *VectorsContext) {}
 
-// ExitListvector2 is called when production listvector2 is exited.
-func (s *BaseParserListener) ExitListvector2(ctx *Listvector2Context) {}
+// ExitVectors is called when production vectors is exited.
+func (s *BaseParserListener) ExitVectors(ctx *VectorsContext) {}
+
+// EnterVector is called when production vector is entered.
+func (s *BaseParserListener) EnterVector(ctx *VectorContext) {}
+
+// ExitVector is called when production vector is exited.
+func (s *BaseParserListener) ExitVector(ctx *VectorContext) {}
 
 // EnterSimplematrix is called when production simplematrix is entered.
 func (s *BaseParserListener) EnterSimplematrix(ctx *SimplematrixContext) {}
 
 // ExitSimplematrix is called when production simplematrix is exited.
 func (s *BaseParserListener) ExitSimplematrix(ctx *SimplematrixContext) {}
+
+// EnterTypematrix is called when production typematrix is entered.
+func (s *BaseParserListener) EnterTypematrix(ctx *TypematrixContext) {}
+
+// ExitTypematrix is called when production typematrix is exited.
+func (s *BaseParserListener) ExitTypematrix(ctx *TypematrixContext) {}
 
 // EnterReasignvector is called when production reasignvector is entered.
 func (s *BaseParserListener) EnterReasignvector(ctx *ReasignvectorContext) {}

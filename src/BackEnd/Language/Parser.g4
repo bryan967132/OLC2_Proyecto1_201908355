@@ -108,11 +108,11 @@ decvector returns[interfaces.Instruction result] :
     d = RW_var id = TK_id TK_equ df = defvector {$result = instructions.NewInitVector($d.line, $d.pos, true,  $id.text, nil, $df.result);} |
     d = RW_let id = TK_id TK_equ df = defvector {$result = instructions.NewInitVector($d.line, $d.pos, false, $id.text, nil, $df.result);} ;
 
-defvector returns[vector.Vector result] :
-    lb = TK_lbrk l = listexp TK_rbrk                  {$result = *vector.NewVector(nil, $l.result)                                            } |
-    lb = TK_lbrk TK_rbrk                              {$result = *vector.NewVector(nil, []interfaces.Expression{})                            } |
-    lb = TK_lbrk t = typeComp TK_rbrk TK_lpar TK_rpar {attType := $t.result;; $result = *vector.NewVector(&attType, []interfaces.Expression{})} |
-    id = TK_id                                        {$result = *vector.NewReuseVector($id.text)                                             } ;
+defvector returns[*vector.Vector result] :
+    lb = TK_lbrk l = listexp TK_rbrk                  {$result = vector.NewVector(nil, $l.result)                                            } |
+    lb = TK_lbrk TK_rbrk                              {$result = vector.NewVector(nil, []interfaces.Expression{})                            } |
+    lb = TK_lbrk t = typeComp TK_rbrk TK_lpar TK_rpar {attType := $t.result;; $result = vector.NewVector(&attType, []interfaces.Expression{})} |
+    id = TK_id                                        {$result = vector.NewReuseVector($id.text)                                             } ;
 
 listexp returns[[]interfaces.Expression result] :
     l = listexp TK_comma e = exp {$result = $l.result;; $result = append($result, $e.result)} |
@@ -123,28 +123,32 @@ funcvector returns[interfaces.Instruction result] :
     id = TK_id TK_dot RW_removeLast TK_lpar TK_rpar                    {$result = instructions.NewRemoveLast($id.line, $id.pos, $id.text)       } |
     id = TK_id TK_dot RW_remove TK_lpar RW_at TK_colon e = exp TK_rpar {$result = instructions.NewRemove($id.line, $id.pos, $id.text, $e.result)} ;
 
-decmatrix :
-    RW_var TK_id (TK_colon typematrix)? TK_equ defmatrix ;
+decmatrix returns[interfaces.Instruction result] :
+    d = RW_var id = TK_id TK_colon t = typematrix TK_equ df = defmatrix {vecType := $t.result;; $result = instructions.NewInitMatrix($d.line, $d.pos, true,  $id.text, &vecType, $df.result)} |
+    d = RW_var id = TK_id TK_equ df = defmatrix                         {$result = instructions.NewInitMatrix($d.line, $d.pos, true,  $id.text, nil, $df.result)} ;
 
-typematrix :
-    TK_lbrk typematrix TK_rbrk |
-    TK_lbrk type TK_rbrk       ;
+defmatrix returns[*vector.Vector result] :
+    m = matrix       {$result = $m.result} |
+    s = simplematrix {$result = vector.NewMatrixRepeating($s.result)} ;
 
-defmatrix :
-    listvector   |
-    simplematrix ;
+matrix returns[*vector.Vector result] :
+    TK_lbrk vs = vectors TK_rbrk {$result = vector.NewMatrix(nil, $vs.result)} ;
 
-listvector :
-    TK_lbrk listvector2 TK_rbrk ;
+vectors returns[[]*vector.Vector result] :
+    vs = vectors TK_comma v = vector {$result = $vs.result;; $result = append($result, $v.result)} |
+    v = vector                       {$result = []*vector.Vector{$v.result}                      } ;
 
-listvector2 :
-    listvector2 TK_comma listvector |
-    listvector                      |
-    listexp                         ;
+vector returns[*vector.Vector result] :
+    TK_lbrk l = listexp TK_rbrk {$result = vector.NewVector(nil, $l.result)} |
+    m = matrix                  {$result = $m.result                       } ;
 
-simplematrix :
-    typematrix TK_lpar RW_repeating TK_colon simplematrix TK_comma RW_count TK_colon exp TK_rpar |
-    typematrix TK_lpar RW_repeating TK_colon exp TK_comma RW_count TK_colon exp TK_rpar          ;
+simplematrix returns[*vector.Repeating result] :
+    t = typematrix TK_lpar RW_repeating TK_colon r = simplematrix TK_comma RW_count TK_colon c = exp TK_rpar {$result = vector.NewRepeating($t.result.Length, $r.result.Dims + 1, $t.result.Type.Value.(utils.Type), nil, $c.result, $r.result)} |
+    t = typematrix TK_lpar RW_repeating TK_colon v = exp TK_comma RW_count TK_colon c = exp TK_rpar          {$result = vector.NewRepeating($t.result.Length, 1, $t.result.Type.Value.(utils.Type), $v.result, $c.result, nil)                 } ;
+
+typematrix returns[utils.VectorType result] :
+    TK_lbrk tm = typematrix TK_rbrk {$result = $tm.result;; $result.Length += 1            } |
+    TK_lbrk t = type TK_rbrk        {$result = utils.VectorType{Length: 1, Type: $t.result}} ;
 
 reasignvector returns[interfaces.Instruction result] :
     id = TK_id index = dims TK_equ e = exp {$result = instructions.NewAsignPosArray($id.line, $id.pos, $id.text, $index.result, $e.result)} ;
@@ -209,7 +213,7 @@ instruction returns[interface{} result] :
     inst10 = decvector                       TK_semicolon? {$result = $inst10.result} |
     inst11 = funcvector                      TK_semicolon? {$result = $inst11.result} |
     (RW_self TK_dot)? inst12 = reasignvector TK_semicolon? {$result = $inst12.result} |
-    decmatrix                       TK_semicolon? |
+    inst13 = decmatrix                       TK_semicolon? {$result = $inst13.result} |
     decstruct                       TK_semicolon? |
     (RW_self TK_dot)? useattribs    TK_semicolon? |
     (RW_self TK_dot)? callfunc      TK_semicolon? |

@@ -8,52 +8,126 @@ import (
 )
 
 type Vector struct {
-	IsMatrix  bool
-	IsReuseID bool
-	Length    int
-	Dims      int
-	Type      *utils.AttribsType
-	Vectors   []*Vector
-	Elements  []interfaces.Expression
-	Values    []*utils.ReturnType
-	ID        string
+	IsMatrix    bool
+	IsReuseID   bool
+	IsRepeating bool
+	Length      int
+	Dims        int
+	Type        *utils.AttribsType
+	Vectors     []*Vector
+	Elements    []interfaces.Expression
+	Values      []*utils.ReturnType
+	ID          string
+	Repeating   *Repeating
 }
 
 func NewMatrix(Type *utils.AttribsType, Vectors []*Vector) *Vector {
-	return &Vector{IsMatrix: true, IsReuseID: false, Type: Type, Vectors: Vectors}
+	return &Vector{IsMatrix: true, IsReuseID: false, IsRepeating: false, Type: Type, Vectors: Vectors}
 }
 
 func NewVector(Type *utils.AttribsType, Elements []interfaces.Expression) *Vector {
-	return &Vector{IsMatrix: false, IsReuseID: false, Type: Type, Elements: Elements}
+	return &Vector{IsMatrix: false, IsReuseID: false, IsRepeating: false, Type: Type, Elements: Elements}
+}
+
+func NewMatrixRepeating(repeating *Repeating) *Vector {
+	return &Vector{IsMatrix: true, IsRepeating: true, Repeating: repeating}
 }
 
 func NewReuseVector(id string) *Vector {
-	return &Vector{IsMatrix: false, IsReuseID: true, ID: id}
+	return &Vector{IsMatrix: false, IsReuseID: true, IsRepeating: false, ID: id}
 }
 
 func (v *Vector) Generate(env *env.Env, Type utils.Type) bool {
 	if v.IsMatrix {
-		v.Vectors = []*Vector{}
 		for i := 0; i < len(v.Vectors); i++ {
 			v.Vectors[i].Generate(env, Type)
 		}
 		v.Length = len(v.Vectors)
 		v.Dims = v.Vectors[0].Dims + 1
+		if v.Type == nil {
+			v.Type = utils.NewAttribsType(0, 0, Type, true)
+		}
 		return true
 	}
 	v.Values = []*utils.ReturnType{}
 	for i := 0; i < len(v.Elements); i++ {
 		v.Values = append(v.Values, v.Elements[i].Exec(env))
-		if &Type == nil {
+		if Type == utils.NIL {
 			Type = v.Values[i].Type
 		}
 		if v.Values[i].Type != Type {
+			if v.Values[i].Type == utils.CHAR && Type == utils.STRING || v.Values[i].Type == utils.INT && Type == utils.FLOAT {
+				v.Values[i].Type = Type
+				continue
+			}
 			return false
 		}
 	}
-	v.Length = len(v.Values)
+	v.Length = len(v.Elements)
 	v.Dims = 1
+	if v.Type == nil {
+		v.Type = utils.NewAttribsType(0, 0, Type, true)
+	}
 	return true
+}
+
+func (v *Vector) GenerateRepeating(env *env.Env, line, column int, Type utils.Type) *Vector {
+	n := v.generateRepeating(env, line, column, Type, v.Repeating)
+	if n != nil {
+		return n.GetCopy()
+	}
+	return nil
+}
+
+func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Type, repeating *Repeating) *Vector {
+	if repeating.Repeating != nil {
+		vec := v.generateRepeating(env, line, column, Type, repeating.Repeating)
+		if vec != nil {
+			if repeating.Type == Type || Type == utils.NIL {
+				count := repeating.Times.Exec(env)
+				if count.Type == utils.INT {
+					vectors := []*Vector{}
+					for i := 0; i < count.Value.(int); i++ {
+						vectors = append(vectors, vec.GetCopy())
+					}
+					mat := NewMatrix(utils.NewAttribsType(0, 0, Type, true), vectors)
+					mat.Dims = repeating.Dims
+					mat.Length = len(vectors)
+					return mat
+				}
+			}
+			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+		}
+		return nil
+	}
+	if repeating.Type == Type || Type == utils.NIL {
+		count := repeating.Times.Exec(env)
+		if count.Type == utils.INT {
+			elements := []interfaces.Expression{}
+			values := []*utils.ReturnType{}
+			var value *utils.ReturnType
+			for i := 0; i < count.Value.(int); i++ {
+				value = repeating.Value.Exec(env)
+				if Type == utils.NIL {
+					Type = value.Type
+				}
+				if value.Type == Type {
+					elements = append(elements, repeating.Value)
+					values = append(values, value)
+					continue
+				}
+				env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+				return nil
+			}
+			vec := NewVector(utils.NewAttribsType(0, 0, Type, true), elements)
+			vec.Dims = repeating.Dims
+			vec.Length = len(elements)
+			vec.Values = values
+			return vec
+		}
+	}
+	env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+	return nil
 }
 
 func (v *Vector) GetPosition(env *env.Env, indexs []int, line, column int) interface{} {

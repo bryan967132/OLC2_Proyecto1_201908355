@@ -17,8 +17,8 @@ type InitVector struct {
 	Value      *vector.Vector
 }
 
-func NewInitVector(line, column int, isVar bool, id string, Type *utils.AttribsType, value vector.Vector) *InitVector {
-	return &InitVector{line, column, isVar, utils.INIT_ID, id, Type, &value}
+func NewInitVector(line, column int, isVar bool, id string, Type *utils.AttribsType, value *vector.Vector) *InitVector {
+	return &InitVector{line, column, isVar, utils.INIT_ID, id, Type, value}
 }
 
 func (in *InitVector) LineN() int {
@@ -62,7 +62,7 @@ func (in *InitVector) Exec(env *env.Env) *utils.ReturnType {
 				reuseVector := *valuesID.Value.(*vector.Vector)
 				values = (&reuseVector).GetCopy()
 			}
-			env.SaveArray(in.IsVariable, in.Id, values, in.Type.Value.(utils.Type), in.Line, in.Column)
+			env.SaveArray(in.IsVariable, in.Id, values, values.Type.Value.(utils.Type), in.Line, in.Column)
 			return nil
 		} else {
 			// vector con tipo Struct
@@ -88,7 +88,7 @@ func (in *InitVector) Exec(env *env.Env) *utils.ReturnType {
 				reuseVector := *valuesID.Value.(*vector.Vector)
 				values = &reuseVector
 			}
-			env.SaveArray(in.IsVariable, in.Id, values, in.Value.Type.Value.(utils.Type), in.Line, in.Column)
+			env.SaveArray(in.IsVariable, in.Id, values, values.Type.Value.(utils.Type), in.Line, in.Column)
 			return nil
 		} else {
 			// vector con tipo Struct
@@ -96,7 +96,7 @@ func (in *InitVector) Exec(env *env.Env) *utils.ReturnType {
 	} else {
 		var values *vector.Vector
 		if !in.Value.IsReuseID {
-			isGenerated := in.Value.Generate(env, in.Type.Value.(utils.Type))
+			isGenerated := in.Value.Generate(env, utils.NIL)
 			if !isGenerated {
 				env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", in.Line, in.Column))
 				return nil
@@ -111,13 +111,13 @@ func (in *InitVector) Exec(env *env.Env) *utils.ReturnType {
 			reuseVector := *valuesID.Value.(*vector.Vector)
 			values = &reuseVector
 		}
-		env.SaveArray(in.IsVariable, in.Id, values, in.Type.Value.(utils.Type), in.Line, in.Column)
+		env.SaveArray(in.IsVariable, in.Id, values, values.Type.Value.(utils.Type), in.Line, in.Column)
 		return nil
 	}
 	return nil
 }
 
-func (ct *InitVector) getType(Type utils.Type) string {
+func (in *InitVector) getType(Type utils.Type) string {
 	switch Type {
 	case utils.INT:
 		return "Int"

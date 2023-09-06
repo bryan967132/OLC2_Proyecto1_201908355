@@ -33,7 +33,7 @@ func (ac *AccessArray) Exec(env *env.Env) *utils.ReturnType {
 	if value != nil {
 		if value.Type == utils.VECTOR {
 			vec := value.Value.(*vector.Vector)
-			if vec.Dims == len(ac.Index) {
+			if vec.Dims >= len(ac.Index) {
 				indexs := []int{}
 				var in *utils.ReturnType
 				for _, exp := range ac.Index {

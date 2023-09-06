@@ -83,7 +83,7 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 	if repeating.Repeating != nil {
 		vec := v.generateRepeating(env, line, column, Type, repeating.Repeating)
 		if vec != nil {
-			if repeating.Type == Type || Type == utils.NIL {
+			if vec.Type.Value.(utils.Type) == repeating.Type {
 				count := repeating.Times.Exec(env)
 				if count.Type == utils.INT {
 					vectors := []*Vector{}
@@ -100,31 +100,37 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 		}
 		return nil
 	}
-	if repeating.Type == Type || Type == utils.NIL {
-		count := repeating.Times.Exec(env)
-		if count.Type == utils.INT {
-			elements := []interfaces.Expression{}
-			values := []*utils.ReturnType{}
-			var value *utils.ReturnType
-			for i := 0; i < count.Value.(int); i++ {
-				value = repeating.Value.Exec(env)
-				if Type == utils.NIL {
-					Type = value.Type
-				}
-				if value.Type == Type {
-					elements = append(elements, repeating.Value)
-					values = append(values, value)
-					continue
-				}
+	count := repeating.Times.Exec(env)
+	if count.Type == utils.INT {
+		elements := []interfaces.Expression{}
+		values := []*utils.ReturnType{}
+		var value *utils.ReturnType
+		value = repeating.Value.Exec(env)
+		if Type == utils.NIL {
+			Type = value.Type
+		}
+		if value.Type != repeating.Type {
+			if value.Type == utils.INT && repeating.Type == utils.FLOAT || value.Type == utils.CHAR && repeating.Type == utils.STRING {
+				value.Type = repeating.Type
+			} else {
 				env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
 				return nil
 			}
-			vec := NewVector(utils.NewAttribsType(0, 0, Type, true), elements)
-			vec.Dims = repeating.Dims
-			vec.Length = len(elements)
-			vec.Values = values
-			return vec
 		}
+		if Type != value.Type {
+			fmt.Println("AQUÍ RETORNÓ FALSE")
+			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+			return nil
+		}
+		for i := 0; i < count.Value.(int); i++ {
+			elements = append(elements, repeating.Value)
+			values = append(values, value)
+		}
+		vec := NewVector(utils.NewAttribsType(0, 0, Type, true), elements)
+		vec.Dims = repeating.Dims
+		vec.Length = len(elements)
+		vec.Values = values
+		return vec
 	}
 	env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
 	return nil

@@ -48,6 +48,7 @@ func (in *InitMatrix) Exec(env *env.Env) *utils.ReturnType {
 		if in.Value != nil {
 			env.SaveArray(in.IsVariable, in.Id, in.Value, in.Value.Type.Value.(utils.Type), in.Line, in.Column)
 		}
+		return nil
 	}
 	if !in.Value.IsRepeating {
 		isGenerated := in.Value.Generate(env, utils.NIL)

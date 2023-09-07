@@ -31,7 +31,8 @@ func (r *RemoveLast) Exec(env *env.Env) *utils.ReturnType {
 	if vec.Type == utils.VECTOR {
 		if len(vec.Value.(*vector.Vector).Elements) > 0 {
 			vec.Value.(*vector.Vector).Elements = vec.Value.(*vector.Vector).Elements[:len(vec.Value.(*vector.Vector).Elements)-1]
-			vec.Value.(*vector.Vector).Generate(env, vec.ArrType)
+			vec.Value.(*vector.Vector).Values = vec.Value.(*vector.Vector).Values[:len(vec.Value.(*vector.Vector).Values)-1]
+			vec.Value.(*vector.Vector).Length -= 1
 		}
 		return nil
 	}

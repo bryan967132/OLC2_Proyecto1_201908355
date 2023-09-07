@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	filePath := "../../../Inputs/Input17.swift"
+	filePath := "../../../Inputs/Input18.swift"
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error al leer el archivo:", err)
@@ -53,7 +53,7 @@ func main() {
 	for _, instruction := range execute {
 		/*defer func() {
 			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v", r))
+				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
 				global.PrintPrints()
 				global.PrintErrors()
 			}
@@ -65,7 +65,7 @@ func main() {
 	for _, instruction := range execute {
 		/*defer func() {
 			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v", r))
+				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
 				global.PrintPrints()
 				global.PrintErrors()
 			}

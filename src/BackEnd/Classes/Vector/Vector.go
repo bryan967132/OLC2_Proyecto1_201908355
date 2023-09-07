@@ -45,7 +45,7 @@ func (v *Vector) Generate(env *env.Env, Type utils.Type) bool {
 		v.Length = len(v.Vectors)
 		v.Dims = v.Vectors[0].Dims + 1
 		if v.Type == nil {
-			v.Type = utils.NewAttribsType(0, 0, Type, true)
+			v.Type = v.Vectors[0].Type
 		}
 		return true
 	}

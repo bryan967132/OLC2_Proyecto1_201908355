@@ -256,6 +256,10 @@ typeComp returns[utils.AttribsType result] :
     i = TK_id {$result = *utils.NewAttribsType($i.line, $i.pos, $i.text, false)} ;
 
 exp returns[interfaces.Expression result] :
+    // Vector
+    id = TK_id index = dims        {$result = expressions.NewAccessArray($id.line, $id.pos, $id.text, $index.result)   } |
+    e = exp TK_dot RW_isEmpty      {$result = expressions.NewIsEmpty($e.result.LineN(), $e.result.ColumnN(), $e.result)} |
+    e = exp TK_dot RW_count        {$result = expressions.NewCount($e.result.LineN(), $e.result.ColumnN(), $e.result)  } |
     // ARITHMETICS
     s = TK_minus e2 = exp                             {$result = expressions.NewArithmetic($s.line, $s.pos, nil, $s.text, $e2.result)                                } |
     e1 = exp s = (TK_mult | TK_div | TK_mod) e2 = exp {$result = expressions.NewArithmetic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
@@ -270,10 +274,6 @@ exp returns[interfaces.Expression result] :
     e1 = exp s = TK_or  e2 = exp  {$result = expressions.NewLogic($e1.result.LineN(), $e1.result.ColumnN(), $e1.result, $s.text, $e2.result)} |
     // CAST
     t = type TK_lpar e = exp TK_rpar {$result = expressions.NewCast($t.result.Line, $t.result.Column, $t.result.Value.(utils.Type), $e.result)} |
-    // Vector
-    id = TK_id index = dims        {$result = expressions.NewAccessArray($id.line, $id.pos, $id.text, $index.result)   } |
-    e = exp TK_dot RW_isEmpty      {$result = expressions.NewIsEmpty($e.result.LineN(), $e.result.ColumnN(), $e.result)} |
-    e = exp TK_dot RW_count        {$result = expressions.NewCount($e.result.LineN(), $e.result.ColumnN(), $e.result)  } |
     // ATTRIBUTES STRUCT
     (RW_self TK_dot)? u = useattribs {$result = $u.result} |
     // CALL FUNCTION

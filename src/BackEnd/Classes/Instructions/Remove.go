@@ -36,7 +36,8 @@ func (r *Remove) Exec(env *env.Env) *utils.ReturnType {
 			if len(vec.Value.(*vector.Vector).Elements) > 0 {
 				if index.Value.(int) >= 0 && index.Value.(int) < len(vec.Value.(*vector.Vector).Elements) {
 					vec.Value.(*vector.Vector).Elements = append(vec.Value.(*vector.Vector).Elements[:index.Value.(int)], vec.Value.(*vector.Vector).Elements[index.Value.(int)+1:]...)
-					vec.Value.(*vector.Vector).Generate(env, vec.ArrType)
+					vec.Value.(*vector.Vector).Values = append(vec.Value.(*vector.Vector).Values[:index.Value.(int)], vec.Value.(*vector.Vector).Values[index.Value.(int)+1:]...)
+					vec.Value.(*vector.Vector).Length -= 1
 					return nil
 				}
 				env.SetError(fmt.Sprintf("Índice fuera de rango. %v:%v", r.Line, r.Column))

@@ -34,7 +34,8 @@ func (a *Append) Exec(env *env.Env) *utils.ReturnType {
 		newValue := a.Exp.Exec(env)
 		if newValue.Type == vec.ArrType {
 			vec.Value.(*vector.Vector).Elements = append(vec.Value.(*vector.Vector).Elements, a.Exp)
-			vec.Value.(*vector.Vector).Generate(env, newValue.Type)
+			vec.Value.(*vector.Vector).Values = append(vec.Value.(*vector.Vector).Values, a.Exp.Exec(env))
+			vec.Value.(*vector.Vector).Length += 1
 			return nil
 		}
 		env.SetError(fmt.Sprintf("El tipo de dato del nuevo valor no es el mismo que almacena el vector. %v:%v", a.Line, a.Column))

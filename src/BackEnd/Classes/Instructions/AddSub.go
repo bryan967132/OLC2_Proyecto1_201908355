@@ -34,25 +34,27 @@ func (a *AddSub) ColumnN() int {
 
 func (a *AddSub) Exec(env *env.Env) *utils.ReturnType {
 	value := env.GetValueID(a.Id, a.Line, a.Column)
-	switch a.Sign {
-	case "+=":
-		env.ReasignID(
-			a.Id,
-			expressions.NewArithmetic(a.Line, a.Column,
-				expressions.NewPrimitive(a.Line, a.Column, fmt.Sprintf("%v", value.Value.(*utils.ReturnType).Value), value.Type),
-				"+",
-				a.Exp).Exec(env),
-			a.Line,
-			a.Column)
-	case "-=":
-		env.ReasignID(
-			a.Id,
-			expressions.NewArithmetic(a.Line, a.Column,
-				expressions.NewPrimitive(a.Line, a.Column, fmt.Sprintf("%v", value.Value.(*utils.ReturnType).Value), value.Type),
-				"-",
-				a.Exp).Exec(env),
-			a.Line,
-			a.Column)
+	if value != nil {
+		switch a.Sign {
+		case "+=":
+			env.ReasignID(
+				a.Id,
+				expressions.NewArithmetic(a.Line, a.Column,
+					expressions.NewPrimitive(a.Line, a.Column, fmt.Sprintf("%v", value.Value.(*utils.ReturnType).Value), value.Type),
+					"+",
+					a.Exp).Exec(env),
+				a.Line,
+				a.Column)
+		case "-=":
+			env.ReasignID(
+				a.Id,
+				expressions.NewArithmetic(a.Line, a.Column,
+					expressions.NewPrimitive(a.Line, a.Column, fmt.Sprintf("%v", value.Value.(*utils.ReturnType).Value), value.Type),
+					"-",
+					a.Exp).Exec(env),
+				a.Line,
+				a.Column)
+		}
 	}
 	return nil
 }

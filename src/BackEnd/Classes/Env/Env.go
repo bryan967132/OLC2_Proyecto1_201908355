@@ -6,13 +6,14 @@ import (
 )
 
 type Env struct {
-	Ids      *map[string]*Symbol
-	previous *Env
-	Name     string
+	Ids       *map[string]*Symbol
+	Functions *map[string]*interface{}
+	previous  *Env
+	Name      string
 }
 
 func NewEnv(previous *Env, name string) *Env {
-	return &Env{&map[string]*Symbol{}, previous, name}
+	return &Env{&map[string]*Symbol{}, &map[string]*interface{}{}, previous, name}
 }
 
 func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
@@ -20,7 +21,7 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: Type}
 		return true
 	}
-	env.SetError(fmt.Sprintf("Declaración de variable existente. %v:%v", line, column))
+	env.SetError(fmt.Sprintf("Redeclaración de variable existente. %v:%v", line, column))
 	return false
 }
 
@@ -29,7 +30,7 @@ func (env *Env) SaveArray(isVariable bool, id string, value interface{}, Type ut
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
 		return true
 	}
-	env.SetError(fmt.Sprintf("Declaración de variable existente. %v:%v", line, column))
+	env.SetError(fmt.Sprintf("Redeclaración de variable existente. %v:%v", line, column))
 	return false
 }
 
@@ -41,7 +42,7 @@ func (env *Env) GetValueID(id string, line, column int) *Symbol {
 		}
 		current = current.previous
 	}
-	current.SetError(fmt.Sprintf("Acceso a variable inexistente. %v:%v", line, column))
+	current.SetError(fmt.Sprintf("Acceso a variable inexistente. '%s' %v:%v", id, line, column))
 	return nil
 }
 
@@ -57,13 +58,38 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", current.getType(value.Type), current.getType((*current.Ids)[id].Type), line, column))
 				return false
 			}
-			current.SetError(fmt.Sprintf("Asignación de valor a constante. %v:%v", line, column))
+			current.SetError(fmt.Sprintf("Resignación de valor a constante. %v:%v", line, column))
 			return false
 		}
 		current = current.previous
 	}
-	current.SetError(fmt.Sprintf("Asignación de valor a variable inexistente. %v:%v", line, column))
+	current.SetError(fmt.Sprintf("Resignación de valor a variable inexistente. %v:%v", line, column))
 	return false
+}
+
+func (env *Env) SaveFunction(id string, Func *interface{}, line, column int) bool {
+	if _, exists := (*env.Functions)[id]; !exists {
+		(*env.Functions)[id] = Func
+		return true
+	}
+	env.SetError(fmt.Sprintf("Redefinición de función existente. %v:%v", line, column))
+	return false
+}
+
+func (env *Env) GetFunction(id string, line, column int) *interface{} {
+	if _, exists := (*env.Functions)[id]; exists {
+		return (*env.Functions)[id]
+	}
+	env.SetError(fmt.Sprintf("Acceso a función inexistente. %v:%v", line, column))
+	return nil
+}
+
+func (env *Env) GetGlobal() *Env {
+	current := env
+	for current.previous != nil {
+		current = current.previous
+	}
+	return current
 }
 
 func (env *Env) SetPrints(print string) {

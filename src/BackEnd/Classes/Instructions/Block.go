@@ -28,8 +28,10 @@ func (bk *Block) ColumnN() int {
 func (bk *Block) Exec(Env *env.Env) *utils.ReturnType {
 	newEnv := env.NewEnv(Env, Env.Name)
 	var ret *utils.ReturnType
+	var inst interfaces.Instruction
 	for _, instruction := range bk.Instructions {
-		ret = (instruction.(interfaces.Instruction)).Exec(newEnv)
+		inst = instruction.(interfaces.Instruction)
+		ret = inst.Exec(newEnv)
 		if ret != nil {
 			return ret
 		}

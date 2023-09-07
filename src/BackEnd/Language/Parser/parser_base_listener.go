@@ -51,6 +51,12 @@ func (s *BaseParserListener) EnterListargs(ctx *ListargsContext) {}
 // ExitListargs is called when production listargs is exited.
 func (s *BaseParserListener) ExitListargs(ctx *ListargsContext) {}
 
+// EnterArg is called when production arg is entered.
+func (s *BaseParserListener) EnterArg(ctx *ArgContext) {}
+
+// ExitArg is called when production arg is exited.
+func (s *BaseParserListener) ExitArg(ctx *ArgContext) {}
+
 // EnterDecvar is called when production decvar is entered.
 func (s *BaseParserListener) EnterDecvar(ctx *DecvarContext) {}
 
@@ -74,6 +80,18 @@ func (s *BaseParserListener) EnterListparams(ctx *ListparamsContext) {}
 
 // ExitListparams is called when production listparams is exited.
 func (s *BaseParserListener) ExitListparams(ctx *ListparamsContext) {}
+
+// EnterParam is called when production param is entered.
+func (s *BaseParserListener) EnterParam(ctx *ParamContext) {}
+
+// ExitParam is called when production param is exited.
+func (s *BaseParserListener) ExitParam(ctx *ParamContext) {}
+
+// EnterTypeparam is called when production typeparam is entered.
+func (s *BaseParserListener) EnterTypeparam(ctx *TypeparamContext) {}
+
+// ExitTypeparam is called when production typeparam is exited.
+func (s *BaseParserListener) ExitTypeparam(ctx *TypeparamContext) {}
 
 // EnterIfstruct is called when production ifstruct is entered.
 func (s *BaseParserListener) EnterIfstruct(ctx *IfstructContext) {}

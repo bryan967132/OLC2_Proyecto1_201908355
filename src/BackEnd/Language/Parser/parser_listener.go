@@ -23,6 +23,9 @@ type ParserListener interface {
 	// EnterListargs is called when entering the listargs production.
 	EnterListargs(c *ListargsContext)
 
+	// EnterArg is called when entering the arg production.
+	EnterArg(c *ArgContext)
+
 	// EnterDecvar is called when entering the decvar production.
 	EnterDecvar(c *DecvarContext)
 
@@ -34,6 +37,12 @@ type ParserListener interface {
 
 	// EnterListparams is called when entering the listparams production.
 	EnterListparams(c *ListparamsContext)
+
+	// EnterParam is called when entering the param production.
+	EnterParam(c *ParamContext)
+
+	// EnterTypeparam is called when entering the typeparam production.
+	EnterTypeparam(c *TypeparamContext)
 
 	// EnterIfstruct is called when entering the ifstruct production.
 	EnterIfstruct(c *IfstructContext)
@@ -173,6 +182,9 @@ type ParserListener interface {
 	// ExitListargs is called when exiting the listargs production.
 	ExitListargs(c *ListargsContext)
 
+	// ExitArg is called when exiting the arg production.
+	ExitArg(c *ArgContext)
+
 	// ExitDecvar is called when exiting the decvar production.
 	ExitDecvar(c *DecvarContext)
 
@@ -184,6 +196,12 @@ type ParserListener interface {
 
 	// ExitListparams is called when exiting the listparams production.
 	ExitListparams(c *ListparamsContext)
+
+	// ExitParam is called when exiting the param production.
+	ExitParam(c *ParamContext)
+
+	// ExitTypeparam is called when exiting the typeparam production.
+	ExitTypeparam(c *TypeparamContext)
 
 	// ExitIfstruct is called when exiting the ifstruct production.
 	ExitIfstruct(c *IfstructContext)

@@ -2,6 +2,7 @@ package main
 
 import (
 	env "TSwift/Classes/Env"
+	instructions "TSwift/Classes/Instructions"
 	interfaces "TSwift/Classes/Interfaces"
 	listener "TSwift/Language"
 	parser "TSwift/Language/Parser"
@@ -15,7 +16,7 @@ import (
 )
 
 func main() {
-	filePath := "../../../Inputs/Input16.swift"
+	filePath := "../../../Inputs/Input17.swift"
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error al leer el archivo:", err)
@@ -57,14 +58,36 @@ func main() {
 				global.PrintErrors()
 			}
 		}()*/
-		instruction.(interfaces.Instruction).Exec(global)
+		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
+			instruction.(interfaces.Instruction).Exec(global)
+		}
+	}
+	for _, instruction := range execute {
+		/*defer func() {
+			if r := recover(); r != nil {
+				global.SetError(fmt.Sprintf("%v", r))
+				global.PrintPrints()
+				global.PrintErrors()
+			}
+		}()*/
+		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
+			instruction.(interfaces.Instruction).Exec(global)
+		}
 	}
 	global.PrintPrints()
 	global.PrintErrors()
 }
 
 func Replaces(msg string) string {
-	replaces := [][]string{{"mismatched input", "Inesperado:"}, {"expecting", ". Se esperaba:"}, {"missing", "Inesperado:"}, {"at", "en"}}
+	replaces := [][]string{
+		{"mismatched input", "Inesperado:"},
+		{"expecting", ". Se esperaba:"},
+		{"missing", "Inesperado:"},
+		{"extraneous input", "Entrada extraña: "},
+		{"input", "entrada"},
+		{"at", "en"},
+		{"no viable alternenive", "Sin recuperar"},
+	}
 	for _, m := range replaces {
 		msg = strings.Replace(msg, m[0], m[1], -1)
 	}
@@ -85,10 +108,10 @@ func NodesTree(id string, tree antlr.Tree, ruleNames []string) string {
 	s := antlr.TreesGetNodeText(tree, ruleNames, nil)
 	s = antlr.EscapeWhitespace(s, false)
 	c := tree.GetChildCount()
-	res := "\n\tnodo_" + id + "[label=\"" + strings.Replace(s, "\"", "\\\"", -1) + "\"];"
+	res := "\n\tn" + id + "[label=\"" + strings.Replace(s, "\"", "\\\"", -1) + "\"];"
 	for i := 0; i < c; i++ {
-		res += NodesTree(fmt.Sprintf("%s_%v", id, i), tree.GetChild(i), ruleNames)
-		res += "\n\tnodo_" + id + " -> " + "nodo_" + fmt.Sprintf("%s_%v", id, i) + ";"
+		res += NodesTree(fmt.Sprintf("%s%v", id, i), tree.GetChild(i), ruleNames)
+		res += "\n\tn" + id + " -> " + "n" + fmt.Sprintf("%s%v", id, i) + ";"
 	}
 	return res
 }

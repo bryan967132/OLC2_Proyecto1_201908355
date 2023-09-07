@@ -25,15 +25,22 @@ instsglobal returns[[]interface{} result]:
 
 instglobal returns[interface{} result] :
     inst0 = instruction             {$result = $inst0.result} |
-    inst1 = declfunc                |
-    inst2 = defstruct TK_semicolon? ;
+    inst1 = declfunc                {$result = $inst1.result} |
+    inst2 = defstruct TK_semicolon? {$result = $inst2.result} ;
 
-callfunc :
-    TK_id TK_lpar listargs? TK_rpar ;
+callfunc returns[interfaces.Expression result] :
+    id = TK_id TK_lpar l = listargs TK_rpar {$result = expressions.NewCallFunction($id.line, $id.pos, $id.text, $l.result)    } |
+    id = TK_id TK_lpar TK_rpar              {$result = expressions.NewCallFunction($id.line, $id.pos, $id.text, []utils.Arg{})} ;
 
-listargs :
-    (TK_id TK_colon)? TK_amp? exp TK_comma listargs |
-    (TK_id TK_colon)? TK_amp? exp                   ;
+listargs returns[[]utils.Arg result] :
+    l = listargs TK_comma a = arg {$result = $l.result;; $result = append($result, $a.result)} |
+    a = arg                       {$result = []utils.Arg{$a.result}                          } ;
+
+arg returns[utils.Arg result] :
+    id = TK_id  TK_colon TK_amp ep = exp {$result = *utils.NewArg($id.line, $id.pos, $id.text, $ep.result, true) } |
+    id = TK_id  TK_colon        ep = exp {$result = *utils.NewArg($id.line, $id.pos, $id.text, $ep.result, false)} |
+    am = TK_amp ep = exp                 {$result = *utils.NewArg($am.line, $am.pos, "_",      $ep.result, true) } |
+    ep = exp                             {$result = *utils.NewArg($ep.result.LineN(), $ep.result.ColumnN(), "_", $ep.result, false)} ;
 
 decvar returns[interfaces.Instruction result] :
     d = RW_var id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, true, $id.text, $t.result.Value.(utils.Type), $e.result)} |
@@ -44,15 +51,29 @@ deccst returns[interfaces.Instruction result] :
     d = RW_let id = TK_id TK_colon t = type TK_equ e = exp {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, $t.result.Value.(utils.Type), $e.result)} |
     d = RW_let id = TK_id TK_equ e = exp                   {$result = instructions.NewInitID($d.line, $d.pos, false, $id.text, utils.NIL, $e.result)                   } ;
 
-declfunc :
-    RW_func TK_id TK_lpar listparams TK_rpar TK_prompt typeComp env |
-    RW_func TK_id TK_lpar listparams TK_rpar env                |
-    RW_func TK_id TK_lpar TK_rpar TK_prompt typeComp env            |
-    RW_func TK_id TK_lpar TK_rpar env                           ;
+declfunc returns[interfaces.Instruction result] :
+    f = RW_func id = TK_id TK_lpar l = listparams TK_rpar TK_prompt t = typeComp b = env {$result = instructions.NewFunction($f.line, $f.pos, $id.text, $l.result,       $b.result, $t.result.Value.(utils.Type))} |
+    f = RW_func id = TK_id TK_lpar l = listparams TK_rpar b = env                        {$result = instructions.NewFunction($f.line, $f.pos, $id.text, $l.result,       $b.result, utils.NIL)                   } |
+    f = RW_func id = TK_id TK_lpar TK_rpar TK_prompt t = typeComp b = env                {$result = instructions.NewFunction($f.line, $f.pos, $id.text, []utils.Param{}, $b.result, $t.result.Value.(utils.Type))} |
+    f = RW_func id = TK_id TK_lpar TK_rpar b = env                                       {$result = instructions.NewFunction($f.line, $f.pos, $id.text, []utils.Param{}, $b.result, utils.NIL)                   } ;
 
-listparams :
-    (TK_id | TK_under)? TK_id TK_colon RW_inout? typeComp TK_comma listparams |
-    (TK_id | TK_under)? TK_id TK_colon RW_inout? typeComp                     ;
+listparams returns[[]utils.Param result] :
+    l = listparams TK_comma p = param {$result = $l.result;; $result = append($result, $p.result)} |
+    p = param                         {$result = []utils.Param{$p.result}                        } ;
+
+param returns[utils.Param result] :
+    ext = TK_id    id = TK_id TK_colon RW_inout t = typeparam {$result = *utils.NewParam($ext.line, $ext.pos, $ext.text, $id.text, true,  $t.result)} |
+    id  = TK_id               TK_colon RW_inout t = typeparam {$result = *utils.NewParam($id.line,  $id.pos,  $id.text,  $id.text, true,  $t.result)} |
+    ext = TK_under id = TK_id TK_colon RW_inout t = typeparam {$result = *utils.NewParam($ext.line, $ext.pos, $ext.text, $id.text, true,  $t.result)} |
+    id  = TK_id               TK_colon RW_inout t = typeparam {$result = *utils.NewParam($id.line,  $id.pos,  $id.text,  $id.text, true,  $t.result)} |
+    ext = TK_id    id = TK_id TK_colon          t = typeparam {$result = *utils.NewParam($ext.line, $ext.pos, $ext.text, $id.text, false, $t.result)} |
+    id  = TK_id               TK_colon          t = typeparam {$result = *utils.NewParam($id.line,  $id.pos,  $id.text,  $id.text, false, $t.result)} |
+    ext = TK_under id = TK_id TK_colon          t = typeparam {$result = *utils.NewParam($ext.line, $ext.pos, $ext.text, $id.text, false, $t.result)} |
+    id  = TK_id               TK_colon          t = typeparam {$result = *utils.NewParam($id.line,  $id.pos,  $id.text,  $id.text, false, $t.result)} ;
+
+typeparam returns[*utils.AttribsType result] :
+    tc = typeComp   {t := $tc.result;; $result = &t} |
+    tm = typematrix {$result = utils.NewAttribsType($tm.result.Line, $tm.result.Column, $tm.result, false)} ;
 
 ifstruct returns[interfaces.Instruction result] :
     r = RW_if cn = exp b1 = env RW_else b2 = ifstruct  {$result = instructions.NewIf($r.line, $r.pos, $cn.result, $b1.result, $b2.result)                                        } |
@@ -148,7 +169,7 @@ simplematrix returns[*vector.Repeating result] :
 
 typematrix returns[utils.VectorType result] :
     TK_lbrk tm = typematrix TK_rbrk {$result = $tm.result;; $result.Length += 1            } |
-    TK_lbrk t = type TK_rbrk        {$result = utils.VectorType{Length: 1, Type: $t.result}} ;
+    b = TK_lbrk t = type TK_rbrk    {$result = utils.VectorType{Line: $b.line, Column: $b.pos, Length: 1, Type: $t.result}} ;
 
 reasignvector returns[interfaces.Instruction result] :
     id = TK_id index = dims TK_equ e = exp {$result = instructions.NewAsignPosArray($id.line, $id.pos, $id.text, $index.result, $e.result)} ;
@@ -157,7 +178,7 @@ dims returns[[]interfaces.Expression result] :
     l = dims TK_lbrk e = exp TK_rbrk {$result = $l.result;; $result = append($result, $e.result)} |
     TK_lbrk e = exp TK_rbrk          {$result = []interfaces.Expression{$e.result}              } ;
 
-defstruct :
+defstruct returns[interfaces.Instruction result] :
     RW_struct TK_id TK_lbrc listattribs TK_rbrc ;
 
 listattribs :
@@ -168,7 +189,7 @@ attrib :
     (RW_let | RW_var) TK_id (TK_colon typeComp)? (TK_equ exp)? |
     RW_mutating? declfunc ;
 
-decstruct :
+decstruct returns[interfaces.Instruction result] :
     (RW_let | RW_var) TK_id (TK_colon TK_id)? TK_equ TK_id TK_lpar listdupla? TK_rpar |
     (RW_let | RW_var) TK_id (TK_colon TK_id)? TK_equ TK_id TK_lpar TK_rpar       ;
 
@@ -176,7 +197,7 @@ listdupla :
     TK_id TK_colon exp TK_comma listdupla |
     TK_id TK_colon exp                    ;
 
-useattribs :
+useattribs returns[interfaces.Expression result] :
     obj useattribs1     |
     obj TK_dot callfunc ;
 
@@ -214,9 +235,9 @@ instruction returns[interface{} result] :
     inst11 = funcvector                      TK_semicolon? {$result = $inst11.result} |
     (RW_self TK_dot)? inst12 = reasignvector TK_semicolon? {$result = $inst12.result} |
     inst13 = decmatrix                       TK_semicolon? {$result = $inst13.result} |
-    decstruct                       TK_semicolon? |
-    (RW_self TK_dot)? useattribs    TK_semicolon? |
-    (RW_self TK_dot)? callfunc      TK_semicolon? |
+    inst14 = decstruct                       TK_semicolon? {$result = $inst14.result} |
+    (RW_self TK_dot)? inst15 = useattribs    TK_semicolon? {$result = $inst15.result} |
+    (RW_self TK_dot)? inst16 = callfunc      TK_semicolon? {$result = $inst16.result} |
     inst17 = print                           TK_semicolon? {$result = $inst17.result} |
     inst18 = RW_return e = exp               TK_semicolon? {$result = expressions.NewReturn($inst18.line, $inst18.line, $e.result)}|
     inst19 = RW_return                       TK_semicolon? {$result = expressions.NewReturn($inst19.line, $inst19.line, nil)      }|
@@ -254,9 +275,9 @@ exp returns[interfaces.Expression result] :
     e = exp TK_dot RW_isEmpty      {$result = expressions.NewIsEmpty($e.result.LineN(), $e.result.ColumnN(), $e.result)} |
     e = exp TK_dot RW_count        {$result = expressions.NewCount($e.result.LineN(), $e.result.ColumnN(), $e.result)  } |
     // ATTRIBUTES STRUCT
-    (RW_self TK_dot)? useattribs   |
+    (RW_self TK_dot)? u = useattribs {$result = $u.result} |
     // CALL FUNCTION
-    (RW_self TK_dot)? callfunc     |
+    (RW_self TK_dot)? c = callfunc {$result = $c.result} |
     // ACCESS ID
     (RW_self TK_dot)? id = TK_id   {$result = expressions.NewAccessID($id.line, $id.pos, $id.text)             } |
     // NIL

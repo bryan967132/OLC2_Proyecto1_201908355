@@ -23,7 +23,7 @@ function getOpenedFiles(num) {
     fetch(`${path}/files/openedFiles`)
     .then(response => response.json())
     .then(response => {
-        response = response.response
+        response = JSON.parse(response.response)
         editor.setOption('value','')
         let tags = document.getElementById('tags')
         tags = `<div class="tmp"><div>d</div></div>`

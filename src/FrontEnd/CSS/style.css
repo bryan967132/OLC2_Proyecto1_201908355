@@ -5,8 +5,8 @@
     --editorB: #1E1E1E;
     --tab: #333333;
     --bar: #3C3C3C;
-    --button: #0075ff;
-    --button_hover: #1e87ff;
+    --button: rgb(30, 30, 30);
+    --button_hover: rgb(43, 46, 50);
 }
 html{
     box-sizing: border-box;

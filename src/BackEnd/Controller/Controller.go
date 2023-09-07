@@ -1,27 +1,38 @@
-package main
+package controller
 
 import (
 	env "TSwift/Classes/Env"
 	instructions "TSwift/Classes/Instructions"
 	interfaces "TSwift/Classes/Interfaces"
+	utils "TSwift/Classes/Utils"
 	listener "TSwift/Language"
 	parser "TSwift/Language/Parser"
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
+	"github.com/gofiber/fiber/v2"
 )
 
-func main() {
-	filePath := "C:\\Users\\bryan\\Documents\\USAC\\Organización de Lenguajes y Compiladores 2\\Laboratorio\\Proyecto1\\Calificación\\Hanoi.swift"
-	fileData, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		fmt.Println("Error al leer el archivo:", err)
-		return
+type Controller struct{}
+
+type Parser struct {
+	Code string `json:"code"`
+}
+
+func (c Controller) Running(ctx *fiber.Ctx) error {
+	return ctx.SendString("Interpreter is running!!!")
+}
+
+func (c Controller) Parser(ctx *fiber.Ctx) error {
+	var reqBody Parser
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return ctx.JSON(fiber.Map{
+			"console": "¡Ha ocurrido un error!",
+		})
 	}
-	input := string(fileData)
-	inputStream := antlr.NewInputStream(input)
+
+	inputStream := antlr.NewInputStream(reqBody.Code)
 	scanner := parser.NewScanner(inputStream)
 	tokens := antlr.NewCommonTokenStream(scanner, antlr.TokenDefaultChannel)
 	parser := parser.NewParserParser(tokens)
@@ -34,13 +45,8 @@ func main() {
 	var listener *listener.TSwfitListener = listener.NewTSwfitListener()
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 
-	/*//fmt.Println(TreeDot(tree, parser.RuleNames))
-	archivo, _ := os.Create("../../../Inputs/Tree.dot")
-	defer archivo.Close() // Cierra el archivo al final de la función
-
-	// Escribe en el archivo
-	escritor := bufio.NewWriter(archivo)
-	_, _ = escritor.WriteString(TreeDot(tree, parser.RuleNames))*/
+	utils.PrintConsole = []string{}
+	utils.Errors = []string{}
 
 	global := env.NewEnv(nil, "Global")
 	for _, fail := range parserErrors.Errors {
@@ -52,8 +58,6 @@ func main() {
 		defer func() {
 			if r := recover(); r != nil {
 				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
-				global.PrintPrints()
-				global.PrintErrors()
 			}
 		}()
 		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
@@ -64,16 +68,51 @@ func main() {
 		defer func() {
 			if r := recover(); r != nil {
 				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
-				global.PrintPrints()
-				global.PrintErrors()
 			}
 		}()
 		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
 			instruction.(interfaces.Instruction).Exec(global)
 		}
 	}
-	global.PrintPrints()
-	global.PrintErrors()
+	return ctx.JSON(fiber.Map{
+		"console": utils.GetStringOuts(),
+	})
+}
+
+func (c Controller) GetAST(ctx *fiber.Ctx) error {
+	var reqBody struct {
+		Code string `json:"code"`
+	}
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return err
+	}
+
+	// Tu lógica de obtención de AST aquí
+
+	// Ejemplo de respuesta
+
+	return ctx.JSON(fiber.Map{
+		"AST": "Tu AST aquí",
+	})
+}
+
+func (c Controller) GetSymbolsTable(ctx *fiber.Ctx) error {
+	// Tu lógica de obtención de tabla de símbolos aquí
+
+	return ctx.JSON(fiber.Map{
+		"Table": "Tu AST aquí",
+	})
+}
+
+func (c Controller) GetErrors(ctx *fiber.Ctx) error {
+	// Tu lógica de obtención de errores aquí
+
+	// Ejemplo de respuesta
+
+	return ctx.JSON(fiber.Map{
+		"Errors": "Tus errores aquí",
+	})
 }
 
 func Replaces(msg string) string {

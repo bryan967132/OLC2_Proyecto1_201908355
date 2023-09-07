@@ -26,7 +26,7 @@
 
 .cm-s-VSCode .CodeMirror-cursor { border-left: 1px solid rgb(255, 255, 255); }  
 .cm-s-VSCode .CodeMirror-activeline-background { background: rgb(48, 54, 61); } 
-.cm-s-VSCode .CodeMirror-gutters { background: rgb(31, 36, 44); border-right: 1px solid rgb(31, 36, 44); } 
+.cm-s-VSCode .CodeMirror-gutters { background: rgb(13, 17, 23); border-right: 1px solid rgb(13, 17, 23); } 
 .cm-s-VSCode .CodeMirror-guttermarker { color: rgb(48, 54, 61); }  
 .cm-s-VSCode .CodeMirror-guttermarker-subtle { color: rgb(48, 54, 61); }  
 .cm-s-VSCode .CodeMirrir-linenumber { color: rgb(48, 54, 61); } 

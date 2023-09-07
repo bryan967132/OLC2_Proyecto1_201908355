@@ -118,7 +118,6 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 			}
 		}
 		if Type != value.Type {
-			fmt.Println("AQUÍ RETORNÓ FALSE")
 			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
 			return nil
 		}

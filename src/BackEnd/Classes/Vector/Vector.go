@@ -204,7 +204,7 @@ func (v *Vector) GetCopy() *Vector {
 	vector.Type = v.Type
 	vector.ID = v.ID
 	for _, v := range v.Vectors {
-		vector.Vectors = append(vector.Vectors, v)
+		vector.Vectors = append(vector.Vectors, v.GetCopy())
 	}
 	for _, v := range v.Elements {
 		vector.Elements = append(vector.Elements, v)

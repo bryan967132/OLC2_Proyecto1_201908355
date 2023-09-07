@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	filePath := "../../../Inputs/Input18.swift"
+	filePath := "C:\\Users\\bryan\\Documents\\USAC\\Organización de Lenguajes y Compiladores 2\\Laboratorio\\Proyecto1\\Calificación\\Hanoi.swift"
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error al leer el archivo:", err)

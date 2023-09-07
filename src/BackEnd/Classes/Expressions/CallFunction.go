@@ -73,7 +73,7 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 								getArray := accessReference.Exec(Env)
 								if typeVec.Type.Value.(utils.Type) == symbolReference.ArrType {
 									if _, exists := (*envFunc.Ids)[param.ID]; !exists {
-										(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: getArray.Value, Id: param.ID, Type: utils.VECTOR, ArrType: symbolReference.ArrType}
+										(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: getArray.Value.(*vector.Vector).GetCopy(), Id: param.ID, Type: utils.VECTOR, ArrType: symbolReference.ArrType}
 										continue
 									}
 									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))

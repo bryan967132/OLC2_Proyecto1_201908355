@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type Remove struct {
@@ -40,15 +39,15 @@ func (r *Remove) Exec(env *env.Env) *utils.ReturnType {
 					vec.Value.(*vector.Vector).Length -= 1
 					return nil
 				}
-				env.SetError(fmt.Sprintf("Índice fuera de rango. %v:%v", r.Line, r.Column))
+				env.SetError("Índice fuera de rango", r.Line, r.Column)
 				return nil
 			}
-			env.SetError(fmt.Sprintf("Ya no hay elementos en el vector. %v:%v", r.Line, r.Column))
+			env.SetError("Ya no hay elementos en el vector", r.Line, r.Column)
 			return nil
 		}
-		env.SetError(fmt.Sprintf("El paramétro enviado no es un dato numérico entero. %v:%v", r.Line, r.Column))
+		env.SetError("El paramétro enviado no es un dato numérico entero", r.Line, r.Column)
 		return nil
 	}
-	env.SetError(fmt.Sprintf("El método 'remove' es exclusivo de vectores. %v:%v", r.Line, r.Column))
+	env.SetError("El método 'remove' es exclusivo de vectores", r.Line, r.Column)
 	return nil
 }

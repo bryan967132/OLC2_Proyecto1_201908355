@@ -1,7 +1,7 @@
 package utils
 
 var PrintConsole = []string{}
-var Errors = []string{}
+var Errors = []Error{}
 
 func GetStringOuts() string {
 	out := ""
@@ -18,7 +18,8 @@ func GetStringOuts() string {
 			out += "↳ ERRORES\n"
 		}
 		for i := 0; i < len(Errors); i++ {
-			out += Errors[i]
+			Errors[i].Number = i + 1
+			out += Errors[i].ToString()
 			if i < len(Errors)-1 {
 				out += "\n"
 			}

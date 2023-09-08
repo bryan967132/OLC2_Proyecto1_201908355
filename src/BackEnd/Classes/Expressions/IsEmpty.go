@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type IsEmpty struct {
@@ -32,6 +31,6 @@ func (i *IsEmpty) Exec(env *env.Env) *utils.ReturnType {
 	if vec.Type == utils.VECTOR {
 		return &utils.ReturnType{Value: vec.Value.(*vector.Vector).Length == 0, Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("El atributo 'isEmpty' es exclusivo de vectores. %v:%v", i.Line, i.Column))
+	env.SetError("El atributo 'isEmpty' es exclusivo de vectores", i.Line, i.Column)
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

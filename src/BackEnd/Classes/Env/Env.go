@@ -21,7 +21,7 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: Type}
 		return true
 	}
-	env.SetError(fmt.Sprintf("Redeclaración de variable existente. %v:%v", line, column))
+	env.SetError("Redeclaración de variable existente", line, column)
 	return false
 }
 
@@ -30,7 +30,7 @@ func (env *Env) SaveArray(isVariable bool, id string, value interface{}, Type ut
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
 		return true
 	}
-	env.SetError(fmt.Sprintf("Redeclaración de variable existente. %v:%v", line, column))
+	env.SetError("Redeclaración de variable existente", line, column)
 	return false
 }
 
@@ -42,7 +42,7 @@ func (env *Env) GetValueID(id string, line, column int) *Symbol {
 		}
 		current = current.previous
 	}
-	current.SetError(fmt.Sprintf("Acceso a variable inexistente. '%s' %v:%v", id, line, column))
+	current.SetError(fmt.Sprintf("Acceso a variable inexistente. '%s'", id), line, column)
 	return nil
 }
 
@@ -55,15 +55,15 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 					(*current.Ids)[id].Value = value
 					return true
 				}
-				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\". %v:%v", current.getType(value.Type), current.getType((*current.Ids)[id].Type), line, column))
+				current.SetError(fmt.Sprintf("Los tipos no coinciden en la asignación. Intenta asignar un \"%v\" a un \"%v\"", current.getType(value.Type), current.getType((*current.Ids)[id].Type)), line, column)
 				return false
 			}
-			current.SetError(fmt.Sprintf("Resignación de valor a constante. %v:%v", line, column))
+			current.SetError("Resignación de valor a constante", line, column)
 			return false
 		}
 		current = current.previous
 	}
-	current.SetError(fmt.Sprintf("Resignación de valor a variable inexistente. %v:%v", line, column))
+	current.SetError("Resignación de valor a variable inexistente", line, column)
 	return false
 }
 
@@ -72,7 +72,7 @@ func (env *Env) SaveFunction(id string, Func *interface{}, line, column int) boo
 		(*env.Functions)[id] = Func
 		return true
 	}
-	env.SetError(fmt.Sprintf("Redefinición de función existente. %v:%v", line, column))
+	env.SetError("Redefinición de función existente", line, column)
 	return false
 }
 
@@ -80,7 +80,7 @@ func (env *Env) GetFunction(id string, line, column int) *interface{} {
 	if _, exists := (*env.Functions)[id]; exists {
 		return (*env.Functions)[id]
 	}
-	env.SetError(fmt.Sprintf("Acceso a función inexistente. %v:%v", line, column))
+	env.SetError("Acceso a función inexistente", line, column)
 	return nil
 }
 
@@ -105,15 +105,15 @@ func (env *Env) PrintPrints() {
 	}
 }
 
-func (env *Env) SetError(errorD string) {
-	if !env.match(errorD) {
-		utils.Errors = append(utils.Errors, errorD)
+func (env *Env) SetError(errorD string, line, column int) {
+	if !env.match(errorD, line, column) {
+		utils.Errors = append(utils.Errors, *utils.NewError(line, column, utils.SEMANTIC, errorD))
 	}
 }
 
-func (env *Env) match(err string) bool {
+func (env *Env) match(err string, line, column int) bool {
 	for _, s := range utils.Errors {
-		if s == err {
+		if s.ToString() == (*utils.NewError(line, column, utils.SEMANTIC, err)).ToString() {
 			return true
 		}
 	}

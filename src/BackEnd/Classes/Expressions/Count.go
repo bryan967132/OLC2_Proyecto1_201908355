@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type Count struct {
@@ -32,6 +31,6 @@ func (c *Count) Exec(env *env.Env) *utils.ReturnType {
 	if vec.Type == utils.VECTOR {
 		return &utils.ReturnType{Value: vec.Value.(*vector.Vector).Length, Type: utils.INT}
 	}
-	env.SetError(fmt.Sprintf("El atributo 'count' es exclusivo de vectores. %v:%v", c.Line, c.Column))
+	env.SetError("El atributo 'count' es exclusivo de vectores", c.Line, c.Column)
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

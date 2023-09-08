@@ -43,34 +43,41 @@ func main() {
 	_, _ = escritor.WriteString(TreeDot(tree, parser.RuleNames))*/
 
 	global := env.NewEnv(nil, "Global")
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				global.SetError(Replaces(fmt.Sprintf("%v", r)), 0, 0)
+			}
+		}()
+	}()
 	for _, fail := range parserErrors.Errors {
-		global.SetError(fmt.Sprintf("%v. %v:%v", Replaces(fail.Msg), fail.Line, fail.Column))
+		global.SetError(Replaces(fail.Msg), fail.Line, fail.Column)
 	}
 
 	execute := listener.Code
 	for _, instruction := range execute {
-		defer func() {
-			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
-				global.PrintPrints()
-				global.PrintErrors()
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					global.SetError(Replaces(fmt.Sprintf("%v", r)), instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN())
+				}
+			}()
+			if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
+				instruction.(interfaces.Instruction).Exec(global)
 			}
 		}()
-		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
-			instruction.(interfaces.Instruction).Exec(global)
-		}
 	}
 	for _, instruction := range execute {
-		defer func() {
-			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
-				global.PrintPrints()
-				global.PrintErrors()
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					global.SetError(Replaces(fmt.Sprintf("%v", r)), instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN())
+				}
+			}()
+			if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
+				instruction.(interfaces.Instruction).Exec(global)
 			}
 		}()
-		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
-			instruction.(interfaces.Instruction).Exec(global)
-		}
 	}
 	global.PrintPrints()
 	global.PrintErrors()
@@ -78,6 +85,7 @@ func main() {
 
 func Replaces(msg string) string {
 	replaces := [][]string{
+		{"runtime error: invalid memory address or nil pointer dereference", "Falla en ejeución. Referencia a dirección de memoria inválida o nil."},
 		{"mismatched input", "Inesperado:"},
 		{"expecting", ". Se esperaba:"},
 		{"missing", "Inesperado:"},

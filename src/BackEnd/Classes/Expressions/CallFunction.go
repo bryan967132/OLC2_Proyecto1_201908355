@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type CallFunction struct {
@@ -46,10 +45,10 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 									(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: value, Id: param.ID, Type: value.Type}
 									continue
 								}
-								global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+								global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 								return nil
 							}
-							global.SetError(fmt.Sprintf("El tipo de dato del parámetro no es el esperado. %v:%v", c.Line, c.Column))
+							global.SetError("El tipo de dato del parámetro no es el esperado", c.Line, c.Column)
 							return nil
 						} else if param.IsVector {
 							if _, okID := c.Args[i].Exp.(interfaces.Expression).(*AccessID); okID {
@@ -61,10 +60,10 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 										(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: symbolReference.Value, Id: param.ID, Type: utils.VECTOR, ArrType: symbolReference.ArrType}
 										continue
 									}
-									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+									global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 									return nil
 								}
-								global.SetError(fmt.Sprintf("El tipo del vector no es el esperado. %v:%v", c.Line, c.Column))
+								global.SetError("El tipo del vector no es el esperado", c.Line, c.Column)
 								return nil
 							} else if _, okV := c.Args[i].Exp.(interfaces.Expression).(*AccessArray); okV {
 								var accessReference *AccessArray = c.Args[i].Exp.(interfaces.Expression).(*AccessArray)
@@ -76,16 +75,16 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 										(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: getArray.Value.(*vector.Vector).GetCopy(), Id: param.ID, Type: utils.VECTOR, ArrType: symbolReference.ArrType}
 										continue
 									}
-									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+									global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 									return nil
 								}
-								global.SetError(fmt.Sprintf("El tipo del vector no es el esperado. %v:%v", c.Line, c.Column))
+								global.SetError("El tipo del vector no es el esperado", c.Line, c.Column)
 								return nil
 							}
-							global.SetError(fmt.Sprintf("No pueden enviarse arreglos directamente. %v:%v", c.Line, c.Column))
+							global.SetError("No pueden enviarse arreglos directamente", c.Line, c.Column)
 							return nil
 						}
-						global.SetError(fmt.Sprintf("El tipo de dato no se reconoce. %v:%v", c.Line, c.Column))
+						global.SetError("El tipo de dato no se reconoce", c.Line, c.Column)
 						return nil
 					}
 					if function.GetParams()[i].IsInout && c.Args[i].IsInout {
@@ -100,13 +99,13 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 										(*envFunc.Ids)[param.ID] = symbolReference
 										continue
 									}
-									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+									global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 									return nil
 								}
-								global.SetError(fmt.Sprintf("El tipo de dato del parámetro no es el esperado. %v:%v", c.Line, c.Column))
+								global.SetError("El tipo de dato del parámetro no es el esperado", c.Line, c.Column)
 								return nil
 							}
-							global.SetError(fmt.Sprintf("El tipo de dato no se reconoce. %v:%v", c.Line, c.Column))
+							global.SetError("El tipo de dato no se reconoce", c.Line, c.Column)
 							return nil
 						} else if param.IsVector {
 							if _, okID := c.Args[i].Exp.(interfaces.Instruction).(*AccessID); okID {
@@ -118,10 +117,10 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 										(*envFunc.Ids)[param.ID] = symbolReference
 										continue
 									}
-									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+									global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 									return nil
 								}
-								global.SetError(fmt.Sprintf("El tipo del vector no es el esperado. %v:%v", c.Line, c.Column))
+								global.SetError("El tipo del vector no es el esperado", c.Line, c.Column)
 								return nil
 							} else if _, okV := c.Args[i].Exp.(interfaces.Expression).(*AccessArray); okV {
 								var accessReference *AccessArray = c.Args[i].Exp.(interfaces.Expression).(*AccessArray)
@@ -137,26 +136,26 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 										(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: v, Id: param.ID, Type: utils.VECTOR, ArrType: symbolReference.ArrType}
 										continue
 									}
-									global.SetError(fmt.Sprintf("No puede haber parámetros distintos con el mismo nombre. %v:%v", c.Line, c.Column))
+									global.SetError("No puede haber parámetros distintos con el mismo nombre", c.Line, c.Column)
 									return nil
 								}
-								global.SetError(fmt.Sprintf("El tipo del vector no es el esperado. %v:%v", c.Line, c.Column))
+								global.SetError("El tipo del vector no es el esperado", c.Line, c.Column)
 								return nil
 							}
-							global.SetError(fmt.Sprintf("No pueden enviarse arreglos directamente. %v:%v", c.Line, c.Column))
+							global.SetError("No pueden enviarse arreglos directamente", c.Line, c.Column)
 							return nil
 						}
 					}
 					if function.GetParams()[i].IsInout && !c.Args[i].IsInout {
-						global.SetError(fmt.Sprintf("El parámetro no se envió por referencia. Falta '&'. %v:%v", c.Line, c.Column))
+						global.SetError("El parámetro no se envió por referencia. Falta '&'", c.Line, c.Column)
 						return nil
 					}
 					if !function.GetParams()[i].IsInout && c.Args[i].IsInout {
-						global.SetError(fmt.Sprintf("El parámetro no se envió por valor. No hace falta '&'. %v:%v", c.Line, c.Column))
+						global.SetError("El parámetro no se envió por valor. No hace falta '&'", c.Line, c.Column)
 						return nil
 					}
 				}
-				global.SetError(fmt.Sprintf("Mal uso de nombre externo. %v:%v", c.Line, c.Column))
+				global.SetError("Mal uso de nombre externo", c.Line, c.Column)
 				return nil
 			}
 			var execute *utils.ReturnType = function.GetBlock().Exec(envFunc)
@@ -168,7 +167,7 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 			}
 			return nil
 		}
-		global.SetError(fmt.Sprintf("Cantidad errónea de parámetros enviados. %v:%v", c.Line, c.Column))
+		global.SetError("Cantidad errónea de parámetros enviados", c.Line, c.Column)
 		return nil
 	}
 	return nil

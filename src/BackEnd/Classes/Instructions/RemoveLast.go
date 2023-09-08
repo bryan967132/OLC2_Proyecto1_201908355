@@ -4,7 +4,6 @@ import (
 	env "TSwift/Classes/Env"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type RemoveLast struct {
@@ -36,6 +35,6 @@ func (r *RemoveLast) Exec(env *env.Env) *utils.ReturnType {
 		}
 		return nil
 	}
-	env.SetError(fmt.Sprintf("El método 'removeLast' es exclusivo de vectores. %v:%v", r.Line, r.Column))
+	env.SetError("El método 'removeLast' es exclusivo de vectores", r.Line, r.Column)
 	return nil
 }

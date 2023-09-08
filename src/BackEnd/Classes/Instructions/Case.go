@@ -66,6 +66,6 @@ func (c *Case) compare(value1, value2 utils.ReturnType, Env *env.Env) bool {
 			return fmt.Sprintf("%v", value1.Value) == fmt.Sprintf("%v", value2.Value)
 		}
 	}
-	Env.SetError(fmt.Sprintf("El tipo de expresion en case no es compatible con el argumento del switch. %v:%v", c.Line, c.Column))
+	Env.SetError("El tipo de expresion en case no es compatible con el argumento del switch", c.Line, c.Column)
 	return false
 }

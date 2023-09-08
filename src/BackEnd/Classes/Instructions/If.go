@@ -48,6 +48,6 @@ func (i *If) Exec(Env *env.Env) *utils.ReturnType {
 		}
 		return nil
 	}
-	Env.SetError(fmt.Sprintf("No se evalúa una expresión lógica o relacional como condicion. %v:%v", i.Line, i.Column))
+	Env.SetError("No se evalúa una expresión lógica o relacional como condicion", i.Line, i.Column)
 	return nil
 }

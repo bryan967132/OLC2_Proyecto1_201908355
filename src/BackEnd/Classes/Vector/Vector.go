@@ -4,7 +4,6 @@ import (
 	env "TSwift/Classes/Env"
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
-	"fmt"
 )
 
 type Vector struct {
@@ -96,7 +95,7 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 					return mat
 				}
 			}
-			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+			env.SetError("Los tipos no coinciden para el vector", line, column)
 		}
 		return nil
 	}
@@ -113,12 +112,12 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 			if value.Type == utils.INT && repeating.Type == utils.FLOAT || value.Type == utils.CHAR && repeating.Type == utils.STRING {
 				value.Type = repeating.Type
 			} else {
-				env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+				env.SetError("Los tipos no coinciden para el vector", line, column)
 				return nil
 			}
 		}
 		if Type != value.Type {
-			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+			env.SetError("Los tipos no coinciden para el vector", line, column)
 			return nil
 		}
 		for i := 0; i < count.Value.(int); i++ {
@@ -131,13 +130,13 @@ func (v *Vector) generateRepeating(env *env.Env, line, column int, Type utils.Ty
 		vec.Values = values
 		return vec
 	}
-	env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", line, column))
+	env.SetError("Los tipos no coinciden para el vector", line, column)
 	return nil
 }
 
 func (v *Vector) GetPosition(env *env.Env, indexs []int, line, column int) interface{} {
 	if len(indexs) > v.Dims {
-		env.SetError(fmt.Sprintf("Las dimensiones no coinciden con las del vector. %v:%v", line, column))
+		env.SetError("Las dimensiones no coinciden con las del vector", line, column)
 		return nil
 	}
 	if len(indexs) == 1 {
@@ -145,34 +144,34 @@ func (v *Vector) GetPosition(env *env.Env, indexs []int, line, column int) inter
 			if indexs[0] >= 0 && indexs[0] < len(v.Vectors) {
 				return v.Vectors[indexs[0]]
 			}
-			env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+			env.SetError("Índices fuera de rango", line, column)
 			return nil
 		}
 		if indexs[0] >= 0 && indexs[0] < len(v.Values) {
 			return v.Values[indexs[0]]
 		}
-		env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+		env.SetError("Índices fuera de rango", line, column)
 		return nil
 	}
 	if indexs[0] >= 0 && indexs[0] < len(v.Vectors) {
 		return v.Vectors[indexs[0]].GetPosition(env, indexs[1:], line, column)
 	}
-	env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+	env.SetError("Índices fuera de rango", line, column)
 	return nil
 }
 
 func (v *Vector) SetValuePosition(env *env.Env, indexs []int, newValue interfaces.Expression, line, column int) bool {
 	if len(indexs) > v.Dims {
-		env.SetError(fmt.Sprintf("Las dimensiones no coinciden con las del vector. %v:%v", line, column))
+		env.SetError("Las dimensiones no coinciden con las del vector", line, column)
 		return false
 	}
 	if len(indexs) == 1 {
 		if v.IsMatrix {
 			if indexs[0] >= 0 && indexs[0] < len(v.Vectors) {
-				env.SetError(fmt.Sprintf("Solo puede modificarse un elemento a la vez en un vector. %v:%v", line, column))
+				env.SetError("Solo puede modificarse un elemento a la vez en un vector", line, column)
 				return false
 			}
-			env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+			env.SetError("Índices fuera de rango", line, column)
 			return false
 		}
 		if indexs[0] >= 0 && indexs[0] < len(v.Values) {
@@ -181,16 +180,16 @@ func (v *Vector) SetValuePosition(env *env.Env, indexs []int, newValue interface
 				v.Values[indexs[0]] = newValue.Exec(env)
 				return true
 			}
-			env.SetError(fmt.Sprintf("El tipo del nuevo valor no coincide con el que almacena el vector. %v:%v", line, column))
+			env.SetError("El tipo del nuevo valor no coincide con el que almacena el vector", line, column)
 			return false
 		}
-		env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+		env.SetError("Índices fuera de rango", line, column)
 		return false
 	}
 	if indexs[0] >= 0 && indexs[0] < len(v.Vectors) {
 		return v.Vectors[indexs[0]].SetValuePosition(env, indexs[1:], newValue, line, column)
 	}
-	env.SetError(fmt.Sprintf("Índices fuera de rango. %v:%v", line, column))
+	env.SetError("Índices fuera de rango", line, column)
 	return false
 }
 

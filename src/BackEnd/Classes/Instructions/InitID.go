@@ -4,7 +4,6 @@ import (
 	env "TSwift/Classes/Env"
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
-	"fmt"
 )
 
 type InitID struct {
@@ -37,7 +36,7 @@ func (in *InitID) Exec(env *env.Env) *utils.ReturnType {
 				env.SaveID(in.IsVariable, in.Id, &utils.ReturnType{Value: value.Value, Type: in.Type}, in.Type, in.Line, in.Column)
 				return nil
 			}
-			env.SetError(fmt.Sprintf("Los tipos no coinciden en la declaración. %v:%v", in.Line, in.Column))
+			env.SetError("Los tipos no coinciden en la declaración", in.Line, in.Column)
 			return nil
 		}
 		env.SaveID(in.IsVariable, in.Id, &utils.ReturnType{Value: value.Value, Type: value.Type}, value.Type, in.Line, in.Column)

@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type AccessArray struct {
@@ -39,7 +38,7 @@ func (ac *AccessArray) Exec(env *env.Env) *utils.ReturnType {
 				for _, exp := range ac.Index {
 					in = exp.Exec(env)
 					if in.Type != utils.INT {
-						env.SetError(fmt.Sprintf("Él índice no toma una expresión de tipo entero. %v:%v", ac.Line, ac.Column))
+						env.SetError("Él índice no toma una expresión de tipo entero", ac.Line, ac.Column)
 						return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 					}
 					indexs = append(indexs, in.Value.(int))
@@ -55,10 +54,10 @@ func (ac *AccessArray) Exec(env *env.Env) *utils.ReturnType {
 					return value.(*utils.ReturnType)
 				}
 			}
-			env.SetError(fmt.Sprintf("Las dimensiones no coinciden con las del vector. %v:%v", ac.Line, ac.Column))
+			env.SetError("Las dimensiones no coinciden con las del vector", ac.Line, ac.Column)
 			return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 		}
-		env.SetError(fmt.Sprintf("La variable llamada no es un vector. %v:%v", ac.Line, ac.Column))
+		env.SetError("La variable llamada no es un vector", ac.Line, ac.Column)
 	}
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

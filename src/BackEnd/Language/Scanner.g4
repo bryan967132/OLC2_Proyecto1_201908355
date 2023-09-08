@@ -100,4 +100,3 @@ NEWLINE       : '\n'     -> skip ;
 UNUSED_       : UNUSED   -> skip ;
 COMMENTS_     : COMMENTS -> skip ;
 COMMENTM_     : COMMENTM -> skip ;
-ERROR         : .        -> skip ;

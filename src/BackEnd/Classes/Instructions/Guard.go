@@ -42,10 +42,10 @@ func (g *Guard) Exec(Env *env.Env) *utils.ReturnType {
 			}
 			return nil
 		}
-		Env.SetError(fmt.Sprintf("No se encuentra la instrucción de transferencia final. %v:%v", g.Line, g.Column))
+		Env.SetError("No se encuentra la instrucción de transferencia final", g.Line, g.Column)
 		return nil
 	}
-	Env.SetError(fmt.Sprintf("No se evalúa una expresión lógica o relacional como condicion. %v:%v", g.Line, g.Column))
+	Env.SetError("No se evalúa una expresión lógica o relacional como condicion", g.Line, g.Column)
 	return nil
 }
 

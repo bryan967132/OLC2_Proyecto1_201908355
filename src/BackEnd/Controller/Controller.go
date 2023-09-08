@@ -24,6 +24,9 @@ func (c Controller) Running(ctx *fiber.Ctx) error {
 	return ctx.SendString("Interpreter is running!!!")
 }
 
+var ParseTree antlr.Tree
+var ParserG *parser.ParserParser
+
 func (c Controller) Parser(ctx *fiber.Ctx) error {
 	var reqBody Parser
 	if err := ctx.BodyParser(&reqBody); err != nil {
@@ -34,66 +37,81 @@ func (c Controller) Parser(ctx *fiber.Ctx) error {
 
 	inputStream := antlr.NewInputStream(reqBody.Code)
 	scanner := parser.NewScanner(inputStream)
+	scannerErrors := listener.NewTSwfitErrorListener()
+	scanner.RemoveErrorListeners()
+	scanner.AddErrorListener(scannerErrors)
+
 	tokens := antlr.NewCommonTokenStream(scanner, antlr.TokenDefaultChannel)
 	parser := parser.NewParserParser(tokens)
-	parser.RemoveErrorListeners()
+
 	parserErrors := listener.NewTSwfitErrorListener()
+	parser.RemoveErrorListeners()
 	parser.AddErrorListener(parserErrors)
 
 	parser.BuildParseTrees = true
 	tree := parser.Init()
 	var listener *listener.TSwfitListener = listener.NewTSwfitListener()
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-
-	utils.PrintConsole = []string{}
-	utils.Errors = []string{}
 
 	global := env.NewEnv(nil, "Global")
-	for _, fail := range parserErrors.Errors {
-		global.SetError(fmt.Sprintf("%v. %v:%v", Replaces(fail.Msg), fail.Line, fail.Column))
-	}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				global.SetError(Replaces(fmt.Sprintf("%v", r)), 0, 0)
+			}
+			antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+			ParseTree = tree
+			ParserG = parser
 
-	execute := listener.Code
-	for _, instruction := range execute {
-		defer func() {
-			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
+			utils.PrintConsole = []string{}
+			utils.Errors = []utils.Error{}
+
+			for _, fail := range scannerErrors.Errors {
+				utils.Errors = append(utils.Errors, *utils.NewError(fail.Line, fail.Column, utils.LEXICAL, Replaces(fail.Msg)))
+			}
+
+			for _, fail := range parserErrors.Errors {
+				utils.Errors = append(utils.Errors, *utils.NewError(fail.Line, fail.Column, utils.SYNTAX, Replaces(fail.Msg)))
+			}
+
+			execute := listener.Code
+			for _, instruction := range execute {
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							global.SetError(Replaces(fmt.Sprintf("%v", r)), instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN())
+						}
+					}()
+					if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
+						instruction.(interfaces.Instruction).Exec(global)
+					}
+				}()
+			}
+			for _, instruction := range execute {
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							global.SetError(Replaces(fmt.Sprintf("%v", r)), instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN())
+						}
+					}()
+					if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
+						instruction.(interfaces.Instruction).Exec(global)
+					}
+				}()
 			}
 		}()
-		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); ok {
-			instruction.(interfaces.Instruction).Exec(global)
-		}
-	}
-	for _, instruction := range execute {
-		defer func() {
-			if r := recover(); r != nil {
-				global.SetError(fmt.Sprintf("%v %v:%v", r, instruction.(interfaces.Instruction).LineN(), instruction.(interfaces.Instruction).ColumnN()))
-			}
-		}()
-		if _, ok := instruction.(interfaces.Instruction).(*instructions.Function); !ok {
-			instruction.(interfaces.Instruction).Exec(global)
-		}
-	}
+	}()
+
+	global.PrintPrints()
+	global.PrintErrors()
+
 	return ctx.JSON(fiber.Map{
 		"console": utils.GetStringOuts(),
 	})
 }
 
 func (c Controller) GetAST(ctx *fiber.Ctx) error {
-	var reqBody struct {
-		Code string `json:"code"`
-	}
-
-	if err := ctx.BodyParser(&reqBody); err != nil {
-		return err
-	}
-
-	// Tu lógica de obtención de AST aquí
-
-	// Ejemplo de respuesta
-
 	return ctx.JSON(fiber.Map{
-		"AST": "Tu AST aquí",
+		"ast": TreeDot(ParseTree, ParserG.RuleNames),
 	})
 }
 
@@ -106,24 +124,27 @@ func (c Controller) GetSymbolsTable(ctx *fiber.Ctx) error {
 }
 
 func (c Controller) GetErrors(ctx *fiber.Ctx) error {
-	// Tu lógica de obtención de errores aquí
-
-	// Ejemplo de respuesta
-
+	errorsDot := `digraph Errors {graph[fontname="Arial" labelloc="t" bgcolor="#252526" fontcolor="white"];node[shape=none fontname="Arial"];label="Errores";table[label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="3"><tr><td bgcolor="#009900" width="100"><font color="#FFFFFF">No.</font></td><td bgcolor="#009900" width="100"><font color="#FFFFFF">Tipo</font></td><td bgcolor="#009900" width="100"><font color="#FFFFFF">Descripción</font></td><td bgcolor="#009900" width="100"><font color="#FFFFFF">Línea</font></td><td bgcolor="#009900" width="100"><font color="#FFFFFF">Columna</font></td></tr>`
+	for _, errors := range utils.Errors {
+		errorsDot += errors.GetDot()
+	}
+	errorsDot += `</table>>];}`
 	return ctx.JSON(fiber.Map{
-		"Errors": "Tus errores aquí",
+		"errors": errorsDot,
 	})
 }
 
 func Replaces(msg string) string {
 	replaces := [][]string{
+		{"runtime error: invalid memory address or nil pointer dereference", "Falla en ejeución. Referencia a dirección de memoria inválida o nil"},
+		{"interface conversion: interface is nil, not interfaces.Instruction", "No puede ejecutarse la instrucción"},
 		{"mismatched input", "Inesperado:"},
 		{"expecting", ". Se esperaba:"},
 		{"missing", "Inesperado:"},
 		{"extraneous input", "Entrada extraña: "},
 		{"input", "entrada"},
 		{"at", "en"},
-		{"no viable alternenive", "Sin recuperar"},
+		{"no viable alternenive", "Alternativa inviable"},
 	}
 	for _, m := range replaces {
 		msg = strings.Replace(msg, m[0], m[1], -1)

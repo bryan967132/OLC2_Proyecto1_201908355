@@ -5,7 +5,6 @@ import (
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type Append struct {
@@ -38,9 +37,9 @@ func (a *Append) Exec(env *env.Env) *utils.ReturnType {
 			vec.Value.(*vector.Vector).Length += 1
 			return nil
 		}
-		env.SetError(fmt.Sprintf("El tipo de dato del nuevo valor no es el mismo que almacena el vector. %v:%v", a.Line, a.Column))
+		env.SetError("El tipo de dato del nuevo valor no es el mismo que almacena el vector", a.Line, a.Column)
 		return nil
 	}
-	env.SetError(fmt.Sprintf("El método 'append' es exclusivo de vectores. %v:%v", a.Line, a.Column))
+	env.SetError("El método 'append' es exclusivo de vectores", a.Line, a.Column)
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	env "TSwift/Classes/Env"
 	utils "TSwift/Classes/Utils"
 	vector "TSwift/Classes/Vector"
-	"fmt"
 )
 
 type InitMatrix struct {
@@ -34,14 +33,14 @@ func (in *InitMatrix) Exec(env *env.Env) *utils.ReturnType {
 		if !in.Value.IsRepeating {
 			isGenerated := in.Value.Generate(env, in.Type.Type.Value.(utils.Type))
 			if !isGenerated {
-				env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", in.Line, in.Column))
+				env.SetError("Los tipos no coinciden para el vector", in.Line, in.Column)
 				return nil
 			}
 			if in.Value.Dims == in.Type.Length {
 				env.SaveArray(in.IsVariable, in.Id, in.Value, in.Value.Type.Value.(utils.Type), in.Line, in.Column)
 				return nil
 			}
-			env.SetError(fmt.Sprintf("Las dimensiones no concuerdan. %v:%v", in.Line, in.Column))
+			env.SetError("Las dimensiones no concuerdan", in.Line, in.Column)
 			return nil
 		}
 		in.Value = in.Value.GenerateRepeating(env, in.Line, in.Column, in.Type.Type.Value.(utils.Type))
@@ -53,7 +52,7 @@ func (in *InitMatrix) Exec(env *env.Env) *utils.ReturnType {
 	if !in.Value.IsRepeating {
 		isGenerated := in.Value.Generate(env, utils.NIL)
 		if !isGenerated {
-			env.SetError(fmt.Sprintf("Los tipos no coinciden para el vector. %v:%v", in.Line, in.Column))
+			env.SetError("Los tipos no coinciden para el vector", in.Line, in.Column)
 			return nil
 		}
 		env.SaveArray(in.IsVariable, in.Id, in.Value, in.Value.Type.Value.(utils.Type), in.Line, in.Column)

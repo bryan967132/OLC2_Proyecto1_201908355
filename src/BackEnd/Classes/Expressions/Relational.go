@@ -68,7 +68,7 @@ func (rl *Relational) equal(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) == fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -92,7 +92,7 @@ func (rl *Relational) notEqual(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) != fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -113,7 +113,7 @@ func (rl *Relational) moreEqual(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) >= fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -134,7 +134,7 @@ func (rl *Relational) lessEqual(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) <= fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -155,7 +155,7 @@ func (rl *Relational) more(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) > fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -176,6 +176,6 @@ func (rl *Relational) less(env *env.Env) *utils.ReturnType {
 	if value1.Type == utils.CHAR && value2.Type == utils.CHAR {
 		return &utils.ReturnType{Value: fmt.Sprintf("%v", value1.Value) < fmt.Sprintf("%v", value2.Value), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones relacionales", rl.Exp1.LineN(), rl.Exp1.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

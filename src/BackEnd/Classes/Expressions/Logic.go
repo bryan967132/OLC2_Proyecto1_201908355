@@ -4,7 +4,6 @@ import (
 	env "TSwift/Classes/Env"
 	interfaces "TSwift/Classes/Interfaces"
 	utils "TSwift/Classes/Utils"
-	"fmt"
 )
 
 type Logic struct {
@@ -44,28 +43,28 @@ func (lg *Logic) Exec(env *env.Env) *utils.ReturnType {
 func (lg *Logic) and(env *env.Env) *utils.ReturnType {
 	value1 := lg.Exp1.Exec(env)
 	if value1.Type != utils.BOOLEAN {
-		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones lógicas.", lg.Exp1.LineN(), lg.Exp1.ColumnN()))
+		env.SetError("Los tipos no son válidos para operaciones lógicas", lg.Exp1.LineN(), lg.Exp1.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
 	value2 := lg.Exp2.Exec(env)
 	if value2.Type == utils.BOOLEAN {
 		return &utils.ReturnType{Value: value1.Value.(bool) && value2.Value.(bool), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones lógicas.", lg.Exp2.LineN(), lg.Exp2.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones lógicas", lg.Exp2.LineN(), lg.Exp2.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
 func (lg *Logic) or(env *env.Env) *utils.ReturnType {
 	value1 := lg.Exp1.Exec(env)
 	if value1.Type != utils.BOOLEAN {
-		env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones lógicas.", lg.Exp1.LineN(), lg.Exp1.ColumnN()))
+		env.SetError("Los tipos no son válidos para operaciones lógicas", lg.Exp1.LineN(), lg.Exp1.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
 	value2 := lg.Exp2.Exec(env)
 	if value2.Type == utils.BOOLEAN {
 		return &utils.ReturnType{Value: value1.Value.(bool) || value2.Value.(bool), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones lógicas.", lg.Exp2.LineN(), lg.Exp2.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones lógicas", lg.Exp2.LineN(), lg.Exp2.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 
@@ -74,6 +73,6 @@ func (lg *Logic) not(env *env.Env) *utils.ReturnType {
 	if value2.Type == utils.BOOLEAN {
 		return &utils.ReturnType{Value: !value2.Value.(bool), Type: utils.BOOLEAN}
 	}
-	env.SetError(fmt.Sprintf("%s %v:%v", "Los tipos no son válidos para operaciones lógicas.", lg.Exp2.LineN(), lg.Exp2.ColumnN()))
+	env.SetError("Los tipos no son válidos para operaciones lógicas", lg.Exp2.LineN(), lg.Exp2.ColumnN())
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }

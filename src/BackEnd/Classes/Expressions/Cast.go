@@ -42,10 +42,10 @@ func (ct *Cast) Exec(env *env.Env) *utils.ReturnType {
 				floatValue, _ := strconv.ParseFloat(fmt.Sprintf("%v", value.Value), 64)
 				return &utils.ReturnType{Value: int(floatValue), Type: ct.Destiny}
 			}
-			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\". %v:%v", ct.getType(value.Type), ct.Exp.LineN(), ct.Exp.ColumnN()))
+			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\"", ct.getType(value.Type)), ct.Exp.LineN(), ct.Exp.ColumnN())
 			return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 		}
-		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Int\". %v:%v", value.Value, ct.Exp.LineN(), ct.Exp.ColumnN()))
+		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Int\"", value.Value), ct.Exp.LineN(), ct.Exp.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
 	if ct.Destiny == utils.FLOAT {
@@ -54,10 +54,10 @@ func (ct *Cast) Exec(env *env.Env) *utils.ReturnType {
 				floatValue, _ := strconv.ParseFloat(fmt.Sprintf("%v", value.Value), 64)
 				return &utils.ReturnType{Value: floatValue, Type: ct.Destiny}
 			}
-			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\". %v:%v", value.Value, ct.Exp.LineN(), ct.Exp.ColumnN()))
+			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\"", value.Value), ct.Exp.LineN(), ct.Exp.ColumnN())
 			return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 		}
-		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Float\". %v:%v", ct.getType(value.Type), ct.Exp.LineN(), ct.Exp.ColumnN()))
+		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Float\"", ct.getType(value.Type)), ct.Exp.LineN(), ct.Exp.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
 	if ct.Destiny == utils.STRING {
@@ -70,10 +70,10 @@ func (ct *Cast) Exec(env *env.Env) *utils.ReturnType {
 		if value.Type == utils.BOOLEAN {
 			return &utils.ReturnType{Value: fmt.Sprintf("%v", value.Value), Type: ct.Destiny}
 		}
-		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"String\". %v:%v", ct.getType(value.Type), ct.Exp.LineN(), ct.Exp.ColumnN()))
+		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"String\"", ct.getType(value.Type)), ct.Exp.LineN(), ct.Exp.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
-	env.SetError(fmt.Sprintf("Error: No hay casteo a \"Bool\" y \"Character\". %v:%v", ct.Line, ct.Column))
+	env.SetError("Error: No hay casteo a \"Bool\" y \"Character\"", ct.Line, ct.Column)
 	return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 }
 

@@ -36,12 +36,12 @@ func (f *For) Exec(Env *env.Env) *utils.ReturnType {
 	if f.Exp == nil {
 		limInf := f.LimInf.Exec(Env)
 		if limInf.Type != utils.INT {
-			Env.SetError(fmt.Sprintf("Tipo inválido para rango. %v:%v", f.Line, f.Column))
+			Env.SetError("Tipo inválido para rango", f.Line, f.Column)
 			return nil
 		}
 		limSup := f.LimSup.Exec(Env)
 		if limSup.Type != utils.INT {
-			Env.SetError(fmt.Sprintf("Tipo inválido para rango. %v:%v", f.Line, f.Column))
+			Env.SetError("Tipo inválido para rango", f.Line, f.Column)
 			return nil
 		}
 		envFor.SaveID(false, f.IDIter, limInf, utils.INT, f.Line, f.Column)
@@ -116,6 +116,6 @@ func (f *For) Exec(Env *env.Env) *utils.ReturnType {
 		}
 		return nil
 	}
-	Env.SetError(fmt.Sprintf("No se puede iterar en el valor. %v:%v", f.Line, f.Column))
+	Env.SetError("No se puede iterar en el valor", f.Line, f.Column)
 	return nil
 }

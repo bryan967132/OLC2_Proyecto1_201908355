@@ -40,7 +40,8 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 						var value *utils.ReturnType = c.Args[i].Exp.(interfaces.Expression).Exec(Env)
 						var param utils.Param = function.GetParams()[i]
 						if param.IsPrimitive {
-							if param.Type.Value.(utils.Type) == value.Type {
+							if param.Type.Value.(utils.Type) == value.Type || param.Type.Value.(utils.Type) == utils.STRING && value.Type == utils.CHAR || param.Type.Value.(utils.Type) == utils.FLOAT && value.Type == utils.INT {
+								value.Type = param.Type.Value.(utils.Type)
 								if _, exists := (*envFunc.Ids)[param.ID]; !exists {
 									(*envFunc.Ids)[param.ID] = &env.Symbol{IsVariable: true, IsPrimitive: true, Value: value, Id: param.ID, Type: value.Type}
 									env.SymTable.Push(env.NewSymTab(param.Line, param.Column, true, true, param.ID, envFunc.Name, param.Type.Value.(utils.Type), utils.NIL))
@@ -182,7 +183,7 @@ func (c *CallFunction) Exec(Env *env.Env) *utils.ReturnType {
 						return nil
 					}
 				}
-				global.SetError("Mal uso de nombre externo", c.Line, c.Column)
+				global.SetError("Mal uso de nombre externo", c.Args[i].Line, c.Args[i].Column)
 				return nil
 			}
 			var execute *utils.ReturnType = function.GetBlock().Exec(envFunc)

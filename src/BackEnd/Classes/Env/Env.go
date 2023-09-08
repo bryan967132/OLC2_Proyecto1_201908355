@@ -19,6 +19,7 @@ func NewEnv(previous *Env, name string) *Env {
 func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: Type}
+		SymTable.Push(NewSymTab(line, column, isVariable, true, id, env.Name, Type, utils.NIL))
 		return true
 	}
 	env.SetError("Redeclaración de variable existente", line, column)
@@ -27,7 +28,8 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 
 func (env *Env) SaveArray(isVariable bool, id string, value interface{}, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
-		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
+		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: false, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
+		SymTable.Push(NewSymTab(line, column, isVariable, false, id, env.Name, utils.VECTOR, Type))
 		return true
 	}
 	env.SetError("Redeclaración de variable existente", line, column)
@@ -67,9 +69,10 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 	return false
 }
 
-func (env *Env) SaveFunction(id string, Func *interface{}, line, column int) bool {
+func (env *Env) SaveFunction(id string, Func *interface{}, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Functions)[id]; !exists {
 		(*env.Functions)[id] = Func
+		SymTable.Push(NewSymTab(line, column, false, false, id, env.Name, Type, utils.NIL))
 		return true
 	}
 	env.SetError("Redefinición de función existente", line, column)

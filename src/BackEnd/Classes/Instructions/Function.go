@@ -38,6 +38,6 @@ func (f *Function) GetBlock() interfaces.Instruction {
 
 func (f *Function) Exec(Env *env.Env) *utils.ReturnType {
 	variable := interface{}(f)
-	Env.SaveFunction(f.ID, &variable, f.Line, f.Column)
+	Env.SaveFunction(f.ID, &variable, f.TypeRet, f.Line, f.Column)
 	return nil
 }

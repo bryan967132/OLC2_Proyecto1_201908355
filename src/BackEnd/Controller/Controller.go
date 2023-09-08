@@ -62,6 +62,7 @@ func (c Controller) Parser(ctx *fiber.Ctx) error {
 			ParseTree = tree
 			ParserG = parser
 
+			env.SymTable = env.NewSymbolTable()
 			utils.PrintConsole = []string{}
 			utils.Errors = []utils.Error{}
 
@@ -101,9 +102,6 @@ func (c Controller) Parser(ctx *fiber.Ctx) error {
 		}()
 	}()
 
-	global.PrintPrints()
-	global.PrintErrors()
-
 	return ctx.JSON(fiber.Map{
 		"console": utils.GetStringOuts(),
 	})
@@ -116,10 +114,8 @@ func (c Controller) GetAST(ctx *fiber.Ctx) error {
 }
 
 func (c Controller) GetSymbolsTable(ctx *fiber.Ctx) error {
-	// Tu lógica de obtención de tabla de símbolos aquí
-
 	return ctx.JSON(fiber.Map{
-		"Table": "Tu AST aquí",
+		"table": env.SymTable.GetDot(),
 	})
 }
 

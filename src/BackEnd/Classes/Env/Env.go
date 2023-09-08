@@ -19,7 +19,7 @@ func NewEnv(previous *Env, name string) *Env {
 func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: true, Value: value, Id: id, Type: Type}
-		SymTable.Push(NewSymTab(line, column, isVariable, true, id, env.Name, Type, utils.NIL))
+		SymTable.Push(NewSymTab(line, column+1, isVariable, true, id, env.Name, Type, utils.NIL))
 		return true
 	}
 	env.SetError("Redeclaración de variable existente", line, column)
@@ -29,7 +29,7 @@ func (env *Env) SaveID(isVariable bool, id string, value *utils.ReturnType, Type
 func (env *Env) SaveArray(isVariable bool, id string, value interface{}, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Ids)[id]; !exists {
 		(*env.Ids)[id] = &Symbol{IsVariable: isVariable, IsPrimitive: false, Value: value, Id: id, Type: utils.VECTOR, ArrType: Type}
-		SymTable.Push(NewSymTab(line, column, isVariable, false, id, env.Name, utils.VECTOR, Type))
+		SymTable.Push(NewSymTab(line, column+1, isVariable, false, id, env.Name, utils.VECTOR, Type))
 		return true
 	}
 	env.SetError("Redeclaración de variable existente", line, column)
@@ -72,7 +72,7 @@ func (env *Env) ReasignID(id string, value *utils.ReturnType, line, column int) 
 func (env *Env) SaveFunction(id string, Func *interface{}, Type utils.Type, line, column int) bool {
 	if _, exists := (*env.Functions)[id]; !exists {
 		(*env.Functions)[id] = Func
-		SymTable.Push(NewSymTab(line, column, false, false, id, env.Name, Type, utils.NIL))
+		SymTable.Push(NewSymTab(line, column+1, false, false, id, env.Name, Type, utils.NIL))
 		return true
 	}
 	env.SetError("Redefinición de función existente", line, column)
@@ -109,8 +109,8 @@ func (env *Env) PrintPrints() {
 }
 
 func (env *Env) SetError(errorD string, line, column int) {
-	if !env.match(errorD, line, column) {
-		utils.Errors = append(utils.Errors, *utils.NewError(line, column, utils.SEMANTIC, errorD))
+	if !env.match(errorD, line, column+1) {
+		utils.Errors = append(utils.Errors, *utils.NewError(line, column+1, utils.SEMANTIC, errorD))
 	}
 }
 

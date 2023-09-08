@@ -11,7 +11,7 @@
 1. [Ejecutar Código](#1-ejecutar-código)
 2. [Consola](#2-consola)
 3. [Reporte De Errores](#3-reporte-de-errores)
-4. [AST](#4-ast)
+4. [CST](#4-cst)
 5. [Tabla De Símbolos](#5-tabla-de-símbolos)
 6. [Sintaxis](#6-sintaxis)
 7. [Sistema de Pestañas](#7-sistema-de-pestañas)

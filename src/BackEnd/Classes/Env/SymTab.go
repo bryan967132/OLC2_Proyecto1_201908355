@@ -65,6 +65,6 @@ func (s *SymTab) getType(Type utils.Type) string {
 	case utils.MATRIX:
 		return "Matriz"
 	default:
-		return "NIL"
+		return "nil"
 	}
 }

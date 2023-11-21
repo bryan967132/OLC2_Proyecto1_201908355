@@ -42,10 +42,10 @@ func (ct *Cast) Exec(env *env.Env) *utils.ReturnType {
 				floatValue, _ := strconv.ParseFloat(fmt.Sprintf("%v", value.Value), 64)
 				return &utils.ReturnType{Value: int(floatValue), Type: ct.Destiny}
 			}
-			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\"", ct.getType(value.Type)), ct.Exp.LineN(), ct.Exp.ColumnN())
+			env.SetError(fmt.Sprintf("La cadena \"%s\" no tiene formato numérico para castear a \"Int\"", value.Value), ct.Exp.LineN(), ct.Exp.ColumnN())
 			return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 		}
-		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Int\"", value.Value), ct.Exp.LineN(), ct.Exp.ColumnN())
+		env.SetError(fmt.Sprintf("No hay casteo de \"%s\" a \"Int\"", ct.getType(value.Type)), ct.Exp.LineN(), ct.Exp.ColumnN())
 		return &utils.ReturnType{Value: "nil", Type: utils.NIL}
 	}
 	if ct.Destiny == utils.FLOAT {
